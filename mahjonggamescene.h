@@ -8,7 +8,7 @@
 
 class MahjongBoardLayoutItem;
 class MahjongTileEntity;
-class MahjongBoardArea;
+class MahjongBoard;
 
 namespace Qt3D {
     class QCamera;
@@ -34,42 +34,10 @@ public slots:
     void newGame();
 
 private:
-    void initTiles();
-    void loadLayout();
-    void initGame();
-    void setupTitles();
-
-    bool isOnLeft(MahjongBoardLayoutItem *tile1, MahjongBoardLayoutItem *tile2);
-    bool isOnRight(MahjongBoardLayoutItem *tile1, MahjongBoardLayoutItem *tile2);
-    bool isOnTop(MahjongBoardLayoutItem *tile1, MahjongBoardLayoutItem *tile2);
-
-    bool canRemove(MahjongTileEntity *tile);
-    bool canBegin(MahjongBoardLayoutItem *tile);
-
-    int countCombinations();
-
-    void removeTiles(MahjongTileEntity *tile1, MahjongTileEntity *tile2);
-
     Qt3D::QEntity* m_rootEntity;
     QSize m_viewportSize;
     Qt3D::QCamera* m_camera;
-
-    //Mahjong Game Properties
-    int m_gameSeed;
-    QString m_layout;
-    float m_tileWidth;
-    float m_tileHeight;
-    float m_tileDepth;
-
-    QVector<MahjongTileEntity*> m_tiles;
-    QVector<MahjongBoardLayoutItem*> m_boardTiles;
-
-    MahjongTileEntity *m_firstTile;
-    int m_tilesLeft;
-    QString m_hints;
-
-    MahjongBoardArea *m_mahjongBoardArea;
-    Qt3D::QEntity *m_hiddenNodeRoot;
+    MahjongBoard *m_mahjongBoard;
 };
 
 #endif // MAHJONGGAMESCENE_H

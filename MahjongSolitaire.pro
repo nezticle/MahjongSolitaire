@@ -6,18 +6,15 @@ SOURCES += \
     tableentity.cpp \
     mahjongtileentity.cpp \
     mahjongboardlayoutitem.cpp \
-    mahjongboardarea.cpp \
-    diffusealphamaterial.cpp
+    mahjongboard.cpp
 
 RESOURCES += \
     qml.qrc \
-    assets.qrc \
-    shaders.qrc
+    assets.qrc
 
 HEADERS += \
     mahjonggamescene.h \
     tableentity.h \
     mahjongtileentity.h \
     mahjongboardlayoutitem.h \
-    mahjongboardarea.h \
-    diffusealphamaterial.h
+    mahjongboard.h
