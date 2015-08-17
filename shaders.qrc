@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>shaders/wireframe_gl3.frag</file>
+        <file>shaders/wireframe_es2.frag</file>
+        <file>shaders/wireframe_es2.vert</file>
+        <file>shaders/wireframe_gl3.vert</file>
+    </qresource>
+</RCC>

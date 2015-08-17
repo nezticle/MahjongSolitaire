@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>wicker_diffuse.png</file>
+        <file>wicker_specular.png</file>
+        <file>MahjongTile.obj</file>
+        <file>Tile_diffuse.png</file>
+        <file>XYPlane.obj</file>
+    </qresource>
+</RCC>
