@@ -32,7 +32,7 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     , m_tileDepth(0.3f)
     , m_firstTile(Q_NULLPTR)
     , m_tilesLeft(0)
-    , m_hiddenNodeRoot(new QObject(this))
+    , m_hiddenNodeRoot(new Qt3D::QEntity())
 {
     // Scene Camera
     m_camera = new Qt3D::QCamera(m_rootEntity);
@@ -59,7 +59,7 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     //Entity which contains all MahjongTiles as children
     m_mahjongBoardArea = new MahjongBoardArea(tableSurface);
     //Set baseCenter and size for the board area
-    m_mahjongBoardArea->setSize(QVector3D(0.9, 0.9, 0.2));
+    m_mahjongBoardArea->setSize(QVector3D(0.9f, 0.9f, 0.2f));
 
     //Create all of the tile items
     initTiles();
@@ -67,6 +67,7 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
 
 MahjongGameScene::~MahjongGameScene()
 {
+    delete m_hiddenNodeRoot;
 }
 
 Qt3D::QEntity *MahjongGameScene::rootEntity() const

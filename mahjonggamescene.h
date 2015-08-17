@@ -69,7 +69,7 @@ private:
     QString m_hints;
 
     MahjongBoardArea *m_mahjongBoardArea;
-    QObject *m_hiddenNodeRoot;
+    Qt3D::QEntity *m_hiddenNodeRoot;
 };
 
 #endif // MAHJONGGAMESCENE_H

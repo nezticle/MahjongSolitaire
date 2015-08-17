@@ -84,7 +84,7 @@ float TableEntity::rotationZ() const
 
 float TableEntity::scale() const
 {
-    m_scale->scale();
+    return m_scale->scale();
 }
 
 void TableEntity::setX(float x)
