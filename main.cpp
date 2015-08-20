@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     }
     format.setDepthBufferSize( 24 );
     format.setStencilBufferSize(8);
+    format.setSamples(0);
     QSurfaceFormat::setDefaultFormat(format);
 
     qmlRegisterType<MahjongGameScene>("com.bsquask.Mahjong", 1, 0, "MahjongGameScene");

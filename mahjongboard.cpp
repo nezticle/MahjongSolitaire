@@ -12,9 +12,6 @@
 MahjongBoard::MahjongBoard(Qt3D::QNode *parent)
     : Qt3D::QEntity(parent)
     , m_gameSeed(0)
-    , m_tileWidth(0.74f)
-    , m_tileHeight(1.0f)
-    , m_tileDepth(0.3f)
     , m_firstTile(Q_NULLPTR)
     , m_tilesLeft(0)
     , m_hiddenNodeRoot(new Qt3D::QEntity())
@@ -292,50 +289,27 @@ void MahjongBoard::setupTitles()
     m_firstTile = Q_NULLPTR;
     m_tilesLeft = m_boardTiles.count(); //should be 144
 
-//    QRectF gameboardGeometry;
-//    QRectF boardAreaRect;
-//    boardAreaRect.setWidth(m_mahjongBoardArea->size().x());
-//    boardAreaRect.setHeight(m_mahjongBoardArea->size().y());
-//    boardAreaRect.setTopLeft(QPointF(-(boardAreaRect.width() / 2.0f) + m_mahjongBoardArea->baseCenter().x(),
-//                             -(boardAreaRect.height() / 2.0f) + m_mahjongBoardArea->baseCenter().y()));
+    float tileWidthMultiplier = MahjongTileEntity::tileWidth() / 2.0f;
+    float tileHeightMultiplier = MahjongTileEntity::tileHeight() / 2.0f;
+    float tileDepthMultiplier = MahjongTileEntity::tileDepth() / 2.0f;
 
-//    const float targetRatio = 3.0f / 2.0f;
-//    const float currentRatio = boardAreaRect.width() / boardAreaRect.height();
+    QRectF gameboardGeometry;
+    gameboardGeometry.setWidth(tileWidthMultiplier * 32.0f);
+    gameboardGeometry.setHeight(tileHeightMultiplier * 16.0f);
+    gameboardGeometry.setX(-gameboardGeometry.width() / 2.0f);
+    gameboardGeometry.setY(-gameboardGeometry.height() / 2.0f);
 
-//    if (currentRatio > targetRatio) {
-//        gameboardGeometry.setWidth(3.0f * boardAreaRect.height());
-//        gameboardGeometry.setHeight(boardAreaRect.height());
-//    } else {
-//        gameboardGeometry.setWidth(boardAreaRect.width());
-//        gameboardGeometry.setHeight(2.0f * boardAreaRect.width());
-//    }
-//    gameboardGeometry.setX(((boardAreaRect.width() - gameboardGeometry.width()) / 2.0f) + boardAreaRect.x());
-//    gameboardGeometry.setY(((boardAreaRect.height() - gameboardGeometry.height()) / 2.0)+ boardAreaRect.y());
+    //Determine tile scale factor
+    //(multiply gameboardGeometry by what to fit inside of m_mahjongBoardArea)
+    //m_scale->setScale(2.0f / gameboardGeometry.width());
 
-//    float tileWidthMultiplier = gameboardGeometry.width() / 32.0f;
-//    float tileHeightMultiplier = gameboardGeometry.height() / 16.0f;
-
-
-//    float tileWidthMultiplier = m_tileWidth / 2.0f;
-//    float tileHeightMultiplier = m_tileHeight / 2.0f;
-//    float tileDepthMultiplier = m_tileDepth / 2.0f;
-
-//    QRect gameboardGeometry;
-//    gameboardGeometry.setWidth(tileWidthMultiplier * 32.0f);
-//    gameboardGeometry.setHeight(tileHeightMultiplier * 16.0f);
-//    gameboardGeometry.setX(-gameboardGeometry.width() / 2.0f);
-//    gameboardGeometry.setY(-gameboardGeometry.height() / 2.0f);
-
-//    //Determine tile scale factor
-//    //(multiply gameboardGeometry by what to fit inside of m_mahjongBoardArea)
-
-//    foreach (MahjongBoardLayoutItem *boardItem, m_boardTiles) {
-//        QVector3D position;
-//        position.setX(((boardItem->x() * tileWidthMultiplier) + tileWidthMultiplier) + gameboardGeometry.x());
-//        position.setY(((boardItem->y() * tileHeightMultiplier) + tileHeightMultiplier) + gameboardGeometry.y());
-//        position.setZ((boardItem->d() * tileDepthMultiplier * 2) + tileDepthMultiplier);
-//        boardItem->tile()->setTranslate(position);
-//    }
+    foreach (MahjongBoardLayoutItem *boardItem, m_boardTiles) {
+        QVector3D position;
+        position.setX(((boardItem->x() * tileWidthMultiplier) + tileWidthMultiplier) + gameboardGeometry.x());
+        position.setY(((boardItem->y() * tileHeightMultiplier) + tileHeightMultiplier) + gameboardGeometry.y());
+        position.setZ((boardItem->d() * tileDepthMultiplier * 2) + tileDepthMultiplier);
+        boardItem->tile()->setTranslate(position);
+    }
 }
 
 bool MahjongBoard::isOnLeft(MahjongBoardLayoutItem *tile1, MahjongBoardLayoutItem *tile2)

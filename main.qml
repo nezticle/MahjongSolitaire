@@ -24,8 +24,10 @@ Window {
         anchors.fill: parent
     }
 
-    MouseArea {
-        anchors.fill: parent
+    Button {
+        text: "New Game"
+        anchors.top: parent.top
+        anchors.right: parent.right
         onClicked: {
             gameboard.mahjongGame.newGame();
         }

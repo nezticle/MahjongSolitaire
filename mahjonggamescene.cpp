@@ -1,5 +1,7 @@
 #include "mahjonggamescene.h"
 
+#include <QtCore/QDebug>
+
 #include <Qt3DCore/QEntity>
 #include <Qt3DCore/QAspectEngine>
 #include <Qt3DCore/QCamera>
@@ -42,9 +44,10 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     tableSurface->setX(0.0f);
     tableSurface->setY(0.0f);
     tableSurface->setZ(0.0f);
-    tableSurface->setScale(13);
+    tableSurface->setScale(18);
 
     m_mahjongBoard = new MahjongBoard(tableSurface);
+    m_mahjongBoard->setScale(0.9);
 }
 
 MahjongGameScene::~MahjongGameScene()
@@ -76,5 +79,10 @@ void MahjongGameScene::setViewportSize(QSize viewportSize)
 void MahjongGameScene::newGame()
 {
     m_mahjongBoard->newGame();
+}
+
+void MahjongGameScene::processInput(int x, int y)
+{
+    qDebug() << "Input event at(" << x << "," << y << ")";
 }
 

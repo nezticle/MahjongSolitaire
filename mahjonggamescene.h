@@ -32,6 +32,7 @@ signals:
 public slots:
     void setViewportSize(QSize viewportSize);
     void newGame();
+    void processInput(int x, int y);
 
 private:
     Qt3D::QEntity* m_rootEntity;

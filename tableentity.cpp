@@ -15,14 +15,14 @@ TableEntity::TableEntity(Qt3D::QNode *parent)
 {
     //Mesh
     m_mesh = new Qt3D::QMesh(this);
-    m_mesh->setSource(QUrl("qrc:/XYPlane.obj"));
+    m_mesh->setSource(QUrl("qrc:/models/XYPlane.obj"));
     addComponent(m_mesh);
 
     //Material
     Qt3D::QTextureImage *diffuseTexture = new Qt3D::QTextureImage;
-    diffuseTexture->setSource(QUrl("qrc:/wicker_diffuse.png"));
+    diffuseTexture->setSource(QUrl("qrc:/textures/wicker_diffuse.png"));
     Qt3D::QTextureImage *specularTexture = new Qt3D::QTextureImage;
-    specularTexture->setSource(QUrl("qrc:/wicker_specular.png"));
+    specularTexture->setSource(QUrl("qrc:/textures/wicker_specular.png"));
 
     Qt3D::QDiffuseSpecularMapMaterial *material = new Qt3D::QDiffuseSpecularMapMaterial(this);
     material->diffuse()->addTextureImage(diffuseTexture);

@@ -54,9 +54,6 @@ private:
     //Mahjong Game Properties
     int m_gameSeed;
     QString m_layout;
-    float m_tileWidth;
-    float m_tileHeight;
-    float m_tileDepth;
 
     QVector<MahjongTileEntity*> m_tiles;
     QVector<MahjongBoardLayoutItem*> m_boardTiles;

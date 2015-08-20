@@ -1,4 +1,4 @@
-QT += gui quick 3dcore 3drenderer
+QT += gui quick 3dcore 3drenderer 3dcollision
 
 SOURCES += \
     main.cpp \
@@ -6,7 +6,8 @@ SOURCES += \
     tableentity.cpp \
     mahjongtileentity.cpp \
     mahjongboardlayoutitem.cpp \
-    mahjongboard.cpp
+    mahjongboard.cpp \
+    mahjongsharedresources.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -17,4 +18,5 @@ HEADERS += \
     tableentity.h \
     mahjongtileentity.h \
     mahjongboardlayoutitem.h \
-    mahjongboard.h
+    mahjongboard.h \
+    mahjongsharedresources.h
