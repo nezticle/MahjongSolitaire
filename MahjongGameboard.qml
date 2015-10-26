@@ -1,7 +1,7 @@
 import com.bsquask.Mahjong 1.0
 import QtQuick.Scene3D 2.0
 import QtQuick 2.5
-import Qt3D 2.0
+import Qt3D.Core 2.0
 
 Item {
     id: gameboard

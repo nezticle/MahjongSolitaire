@@ -3,14 +3,17 @@
 
 #include <Qt3DCore/QEntity>
 
-namespace Qt3D {
+namespace Qt3DCore {
     class QTranslateTransform;
     class QRotateTransform;
     class QScaleTransform;
+}
+
+namespace Qt3DRender {
     class QMesh;
 }
 
-class TableEntity : public Qt3D::QEntity
+class TableEntity : public Qt3DCore::QEntity
 {
     Q_OBJECT
     Q_PROPERTY(float x READ x WRITE setX NOTIFY xChanged)
@@ -21,7 +24,7 @@ class TableEntity : public Qt3D::QEntity
     Q_PROPERTY(float rotationZ READ rotationZ WRITE setRotationZ NOTIFY rotationZChanged)
     Q_PROPERTY(float scale READ scale WRITE setScale NOTIFY scaleChanged)
 public:
-    TableEntity(Qt3D::QNode *parent = 0);
+    TableEntity(Qt3DCore::QNode *parent = 0);
 
     float x() const;
     float y() const;
@@ -55,12 +58,12 @@ signals:
     void scaleChanged(float scale);
 
 private:
-    Qt3D::QTranslateTransform *m_translate;
-    Qt3D::QRotateTransform *m_rotationX;
-    Qt3D::QRotateTransform *m_rotationY;
-    Qt3D::QRotateTransform *m_rotationZ;
-    Qt3D::QScaleTransform *m_scale;
-    Qt3D::QMesh *m_mesh;
+    Qt3DCore::QTranslateTransform *m_translate;
+    Qt3DCore::QRotateTransform *m_rotationX;
+    Qt3DCore::QRotateTransform *m_rotationY;
+    Qt3DCore::QRotateTransform *m_rotationZ;
+    Qt3DCore::QScaleTransform *m_scale;
+    Qt3DRender::QMesh *m_mesh;
 };
 
 #endif // TABLEENTITY_H

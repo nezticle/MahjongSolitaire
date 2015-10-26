@@ -5,49 +5,49 @@
 #include <Qt3DCore/QRotateTransform>
 #include <Qt3dCore/QScaleTransform>
 
-#include <Qt3DRenderer/QDiffuseSpecularMapMaterial>
-#include <Qt3DRenderer/QTextureImage>
-#include <Qt3DRenderer/QAbstractTextureProvider>
-#include <Qt3DRenderer/QMesh>
+#include <Qt3DRender/QDiffuseSpecularMapMaterial>
+#include <Qt3DRender/QTextureImage>
+#include <Qt3DRender/QAbstractTextureProvider>
+#include <Qt3DRender/QMesh>
 
-TableEntity::TableEntity(Qt3D::QNode *parent)
-    : Qt3D::QEntity(parent)
+TableEntity::TableEntity(Qt3DCore::QNode *parent)
+    : Qt3DCore::QEntity(parent)
 {
     //Mesh
-    m_mesh = new Qt3D::QMesh(this);
+    m_mesh = new Qt3DRender::QMesh(this);
     m_mesh->setSource(QUrl("qrc:/models/XYPlane.obj"));
     addComponent(m_mesh);
 
     //Material
-    Qt3D::QTextureImage *diffuseTexture = new Qt3D::QTextureImage;
+    Qt3DRender::QTextureImage *diffuseTexture = new Qt3DRender::QTextureImage;
     diffuseTexture->setSource(QUrl("qrc:/textures/wicker_diffuse.png"));
-    Qt3D::QTextureImage *specularTexture = new Qt3D::QTextureImage;
+    Qt3DRender::QTextureImage *specularTexture = new Qt3DRender::QTextureImage;
     specularTexture->setSource(QUrl("qrc:/textures/wicker_specular.png"));
 
-    Qt3D::QDiffuseSpecularMapMaterial *material = new Qt3D::QDiffuseSpecularMapMaterial(this);
+    Qt3DRender::QDiffuseSpecularMapMaterial *material = new Qt3DRender::QDiffuseSpecularMapMaterial(this);
     material->diffuse()->addTextureImage(diffuseTexture);
     material->diffuse()->setGenerateMipMaps(false);
-    material->diffuse()->setMagnificationFilter(Qt3D::QAbstractTextureProvider::Linear);
+    material->diffuse()->setMagnificationFilter(Qt3DRender::QAbstractTextureProvider::Linear);
     material->specular()->addTextureImage(specularTexture);
     material->specular()->setGenerateMipMaps(false);
-    material->specular()->setMagnificationFilter(Qt3D::QAbstractTextureProvider::Linear);
+    material->specular()->setMagnificationFilter(Qt3DRender::QAbstractTextureProvider::Linear);
     material->setShininess(0.5f);
     addComponent(material);
 
     //Transform
-    Qt3D::QTransform *transform = new Qt3D::QTransform(this);
-    m_translate = new Qt3D::QTranslateTransform;
+    Qt3DCore::QTransform *transform = new Qt3DCore::QTransform(this);
+    m_translate = new Qt3DCore::QTranslateTransform;
     transform->addTransform(m_translate);
-    m_rotationX = new Qt3D::QRotateTransform;
+    m_rotationX = new Qt3DCore::QRotateTransform;
     m_rotationX->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
     transform->addTransform(m_rotationX);
-    m_rotationY = new Qt3D::QRotateTransform;
+    m_rotationY = new Qt3DCore::QRotateTransform;
     m_rotationY->setAxis(QVector3D(0.0f, 1.0f, 0.0f));
     transform->addTransform(m_rotationY);
-    m_rotationZ = new Qt3D::QRotateTransform;
+    m_rotationZ = new Qt3DCore::QRotateTransform;
     m_rotationZ->setAxis(QVector3D(0.0f, 0.0f, 1.0f));
     transform->addTransform(m_rotationZ);
-    m_scale = new Qt3D::QScaleTransform;
+    m_scale = new Qt3DCore::QScaleTransform;
     transform->addTransform(m_scale);
     addComponent(transform);
 }

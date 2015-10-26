@@ -4,23 +4,22 @@
 
 #include <Qt3DCore/QTransform>
 #include <Qt3DCore/QTranslateTransform>
-#include <Qt3dCore/QScaleTransform>
+#include <Qt3DCore/QScaleTransform>
 
 #include <QtCore/QTime>
 #include <QtCore/QDebug>
 
-MahjongBoard::MahjongBoard(Qt3D::QNode *parent)
-    : Qt3D::QEntity(parent)
+MahjongBoard::MahjongBoard(Qt3DCore::QNode *parent)
+    : Qt3DCore::QEntity(parent)
     , m_gameSeed(0)
     , m_firstTile(Q_NULLPTR)
     , m_tilesLeft(0)
-    , m_hiddenNodeRoot(new Qt3D::QEntity())
 {
     //Transform
-    Qt3D::QTransform *transform = new Qt3D::QTransform(this);
-    m_translate = new Qt3D::QTranslateTransform;
+    Qt3DCore::QTransform *transform = new Qt3DCore::QTransform(this);
+    m_translate = new Qt3DCore::QTranslateTransform;
     transform->addTransform(m_translate);
-    m_scale = new Qt3D::QScaleTransform;
+    m_scale = new Qt3DCore::QScaleTransform;
     transform->addTransform(m_scale);
     addComponent(transform);
 
@@ -30,7 +29,6 @@ MahjongBoard::MahjongBoard(Qt3D::QNode *parent)
 
 MahjongBoard::~MahjongBoard()
 {
-    delete m_hiddenNodeRoot;
 }
 
 QVector3D MahjongBoard::translate() const
@@ -72,8 +70,8 @@ void MahjongBoard::initTiles()
     //Create tiles
     for (int i = 0; i < 144; ++i) {
         //Create with no parent to prevent rendering
-        MahjongTileEntity *tile = new MahjongTileEntity(Q_NULLPTR);
-        tile->setParent(m_hiddenNodeRoot);
+        MahjongTileEntity *tile = new MahjongTileEntity(this);
+        tile->setVisible(false);
         m_tiles.append(tile);
     }
     int currentTarget = 0;
@@ -94,6 +92,16 @@ void MahjongBoard::initTiles()
         m_tiles[currentTarget]->setFaceValue("s" + QString::number(g)); currentTarget++;
         m_tiles[currentTarget]->setFaceValue("f" + QString::number(g)); currentTarget++;
     }
+}
+
+void MahjongBoard::reset()
+{
+    //Hide all tiles
+    foreach (MahjongTileEntity *tile, m_tiles) {
+        tile->setVisible(false);
+    }
+
+    m_firstTile = Q_NULLPTR;
 }
 
 void MahjongBoard::loadLayout()
@@ -254,10 +262,14 @@ void MahjongBoard::initGame()
 {
     qsrand(m_gameSeed);
 
+    reset();
+
     loadLayout();
 
     //Assert that Layout and Tiles are the same size
     Q_ASSERT(m_tiles.count() == m_boardTiles.count());
+
+    m_tilesLeft = m_boardTiles.count(); //should be 144
 
     //Shuffle the tiles
     QVector<int> shuffleIndex;
@@ -276,8 +288,6 @@ void MahjongBoard::initGame()
         MahjongTileEntity *tile = m_tiles[shuffleIndex[i]];
         m_boardTiles[i]->setTile(tile);
         tile->setBoardPosition(m_boardTiles[i]);
-        //Set visible by setting parent
-        tile->setParent(this);
     }
 
     //Move tiles into their calculated positions
@@ -286,9 +296,6 @@ void MahjongBoard::initGame()
 
 void MahjongBoard::setupTitles()
 {
-    m_firstTile = Q_NULLPTR;
-    m_tilesLeft = m_boardTiles.count(); //should be 144
-
     float tileWidthMultiplier = MahjongTileEntity::tileWidth() / 2.0f;
     float tileHeightMultiplier = MahjongTileEntity::tileHeight() / 2.0f;
     float tileDepthMultiplier = MahjongTileEntity::tileDepth() / 2.0f;
@@ -299,16 +306,14 @@ void MahjongBoard::setupTitles()
     gameboardGeometry.setX(-gameboardGeometry.width() / 2.0f);
     gameboardGeometry.setY(-gameboardGeometry.height() / 2.0f);
 
-    //Determine tile scale factor
-    //(multiply gameboardGeometry by what to fit inside of m_mahjongBoardArea)
-    //m_scale->setScale(2.0f / gameboardGeometry.width());
-
     foreach (MahjongBoardLayoutItem *boardItem, m_boardTiles) {
         QVector3D position;
         position.setX(((boardItem->x() * tileWidthMultiplier) + tileWidthMultiplier) + gameboardGeometry.x());
         position.setY(((boardItem->y() * tileHeightMultiplier) + tileHeightMultiplier) + gameboardGeometry.y());
         position.setZ((boardItem->d() * tileDepthMultiplier * 2) + tileDepthMultiplier);
         boardItem->tile()->setTranslate(position);
+        //Set visible by setting parent
+        boardItem->tile()->setVisible(true);
     }
 }
 
@@ -468,6 +473,6 @@ void MahjongBoard::removeTiles(MahjongTileEntity *tile1, MahjongTileEntity *tile
     m_tilesLeft -= 2;
     tile1->setSelected(false);
     tile2->setSelected(false);
-    tile1->setParent(m_hiddenNodeRoot);
-    tile2->setParent(m_hiddenNodeRoot);
+    tile1->setVisible(false);
+    tile2->setVisible(false);
 }

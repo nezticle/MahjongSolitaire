@@ -7,18 +7,18 @@
 class MahjongBoardLayoutItem;
 class MahjongTileEntity;
 
-namespace Qt3D {
+namespace Qt3DCore {
     class QTranslateTransform;
     class QScaleTransform;
 }
 
-class MahjongBoard : public Qt3D::QEntity
+class MahjongBoard : public Qt3DCore::QEntity
 {
     Q_OBJECT
     Q_PROPERTY(QVector3D translate READ translate WRITE setTranslate NOTIFY translateChanged)
     Q_PROPERTY(float scale READ scale WRITE setScale NOTIFY scaleChanged)
 public:
-    MahjongBoard(Qt3D::QNode *parent = 0);
+    MahjongBoard(Qt3DCore::QNode *parent = 0);
     ~MahjongBoard();
 
     QVector3D translate() const;
@@ -36,6 +36,7 @@ signals:
 
 private:
     void initTiles();
+    void reset();
     void loadLayout();
     void initGame();
     void setupTitles();
@@ -62,10 +63,8 @@ private:
     int m_tilesLeft;
     QString m_hints;
 
-    Qt3D::QEntity *m_hiddenNodeRoot;
-
-    Qt3D::QTranslateTransform *m_translate;
-    Qt3D::QScaleTransform *m_scale;
+    Qt3DCore::QTranslateTransform *m_translate;
+    Qt3DCore::QScaleTransform *m_scale;
 
 };
 

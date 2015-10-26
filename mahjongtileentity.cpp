@@ -7,22 +7,20 @@
 #include <Qt3DCore/QTranslateTransform>
 #include <Qt3DCore/QScaleTransform>
 
-#include <Qt3DRenderer/QMesh>
-#include <Qt3DRenderer/QTextureImage>
-#include <Qt3DRenderer/QDiffuseMapMaterial>
+#include <Qt3DRender/QMesh>
+#include <Qt3DRender/QTextureImage>
+#include <Qt3DRender/QDiffuseMapMaterial>
 
-#include <Qt3DCollision/QBoxCollider>
-
-class MahjongTilefaceEntity : public Qt3D::QEntity
+class MahjongTilefaceEntity : public Qt3DCore::QEntity
 {
 public:
     MahjongTilefaceEntity(MahjongTileEntity *parent)
-        : Qt3D::QEntity(parent)
+        : Qt3DCore::QEntity(parent)
         , m_material(Q_NULLPTR)
     {
         //Transform
-        Qt3D::QTransform *transformComponent = new Qt3D::QTransform(this);
-        Qt3D::QTranslateTransform *translate = new Qt3D::QTranslateTransform;
+        Qt3DCore::QTransform *transformComponent = new Qt3DCore::QTransform(this);
+        Qt3DCore::QTranslateTransform *translate = new Qt3DCore::QTranslateTransform;
         transformComponent->addTransform(translate);
         translate->setDz(MahjongTileEntity::tileDepth() * 0.5 + 0.0001f);
         addComponent(transformComponent);
@@ -41,7 +39,7 @@ public:
     }
 
 private:
-    Qt3D::QMaterial *m_material;
+    Qt3DRender::QMaterial *m_material;
 };
 
 
@@ -49,17 +47,17 @@ float MahjongTileEntity::s_tileWidth = 0.074f;
 float MahjongTileEntity::s_tileHeight = 0.10f;
 float MahjongTileEntity::s_tileDepth = 0.03f;
 
-MahjongTileEntity::MahjongTileEntity(Qt3D::QNode *parent)
-    : Qt3D::QEntity(parent)
+MahjongTileEntity::MahjongTileEntity(Qt3DCore::QNode *parent)
+    : Qt3DCore::QEntity(parent)
     , m_boardPosition(Q_NULLPTR)
     , m_selected(false)
     , m_visible(false)
     , m_tileFace(new MahjongTilefaceEntity(this))
 {
     //Transform
-    Qt3D::QTransform *transformComponent = new Qt3D::QTransform(this);
-    m_translate = new Qt3D::QTranslateTransform;
-    m_scale = new Qt3D::QScaleTransform;
+    Qt3DCore::QTransform *transformComponent = new Qt3DCore::QTransform(this);
+    m_translate = new Qt3DCore::QTranslateTransform;
+    m_scale = new Qt3DCore::QScaleTransform;
     transformComponent->addTransform(m_translate);
     transformComponent->addTransform(m_scale);
     addComponent(transformComponent);
@@ -70,12 +68,7 @@ MahjongTileEntity::MahjongTileEntity(Qt3D::QNode *parent)
     //Material
     addComponent(MahjongSharedResources::instance().tileMaterial());
 
-    //Collider
-    Qt3D::QBoxCollider *boxCollider = new Qt3D::QBoxCollider;
-    boxCollider->setRadii(QVector3D(s_tileWidth / 2.0f,
-                                    s_tileHeight / 2.0f,
-                                    s_tileDepth / 2.0f));
-    addComponent(boxCollider);
+    setEnabled(false);
 }
 
 bool MahjongTileEntity::isSelected() const
@@ -179,5 +172,7 @@ void MahjongTileEntity::setVisible(bool visible)
         return;
 
     m_visible = visible;
+    setEnabled(m_visible);
+
     emit visibleChanged(visible);
 }

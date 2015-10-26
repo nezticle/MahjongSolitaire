@@ -9,15 +9,18 @@
 class MahjongBoardLayoutItem;
 class MahjongTilefaceEntity;
 
-namespace Qt3D {
-    class QMesh;
+namespace Qt3DCore {
     class QTranslateTransform;
     class QRotateTransform;
-    class QMaterial;
     class QScaleTransform;
 }
 
-class MahjongTileEntity : public Qt3D::QEntity
+namespace Qt3DRender {
+    class QMesh;
+    class QMaterial;
+}
+
+class MahjongTileEntity : public Qt3DCore::QEntity
 {
     Q_OBJECT
     Q_PROPERTY(QVector3D translate READ translate WRITE setTranslate NOTIFY translateChanged)
@@ -27,7 +30,7 @@ class MahjongTileEntity : public Qt3D::QEntity
     Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
 
 public:
-    MahjongTileEntity(Qt3D::QNode *parent = 0);
+    MahjongTileEntity(Qt3DCore::QNode *parent = 0);
 
     bool isSelected() const;
     QString faceValue() const;
@@ -63,8 +66,8 @@ private:
     QString m_faceValue;
     bool m_selected;
 
-    Qt3D::QTranslateTransform *m_translate;
-    Qt3D::QScaleTransform *m_scale;
+    Qt3DCore::QTranslateTransform *m_translate;
+    Qt3DCore::QScaleTransform *m_scale;
     bool m_visible;
     MahjongTilefaceEntity *m_tileFace;
 

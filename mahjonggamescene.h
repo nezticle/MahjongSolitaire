@@ -10,20 +10,20 @@ class MahjongBoardLayoutItem;
 class MahjongTileEntity;
 class MahjongBoard;
 
-namespace Qt3D {
+namespace Qt3DCore {
     class QCamera;
 }
 
 class MahjongGameScene : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Qt3D::QEntity* rootEntity READ rootEntity CONSTANT)
+    Q_PROPERTY(Qt3DCore::QEntity* rootEntity READ rootEntity CONSTANT)
     Q_PROPERTY(QSize viewportSize READ viewportSize WRITE setViewportSize NOTIFY viewportSizeChanged)
 public:
     explicit MahjongGameScene(QObject *parent = 0);
     ~MahjongGameScene();
 
-    Qt3D::QEntity *rootEntity() const;
+    Qt3DCore::QEntity *rootEntity() const;
     QSize viewportSize() const;
 
 signals:
@@ -35,9 +35,9 @@ public slots:
     void processInput(int x, int y);
 
 private:
-    Qt3D::QEntity* m_rootEntity;
+    Qt3DCore::QEntity* m_rootEntity;
     QSize m_viewportSize;
-    Qt3D::QCamera* m_camera;
+    Qt3DCore::QCamera* m_camera;
     MahjongBoard *m_mahjongBoard;
 };
 

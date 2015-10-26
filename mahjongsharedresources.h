@@ -4,7 +4,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QMap>
 
-namespace Qt3D {
+namespace Qt3DRender {
     class QMaterial;
     class QMesh;
 }
@@ -14,11 +14,11 @@ class MahjongSharedResources
 public:
     static MahjongSharedResources &instance();
 
-    Qt3D::QMaterial *materialForTileface(const QString &tileface);
-    Qt3D::QMaterial *tileMaterial();
-    Qt3D::QMaterial *tileSelectedMaterial();
-    Qt3D::QMesh *tileMesh();
-    Qt3D::QMesh *tilefaceMesh();
+    Qt3DRender::QMaterial *materialForTileface(const QString &tileface);
+    Qt3DRender::QMaterial *tileMaterial();
+    Qt3DRender::QMaterial *tileSelectedMaterial();
+    Qt3DRender::QMesh *tileMesh();
+    Qt3DRender::QMesh *tilefaceMesh();
 
 private:
     MahjongSharedResources();
@@ -26,13 +26,13 @@ private:
     void operator =(MahjongSharedResources const&);
 
     void initSharedResources();
-    Qt3D::QMaterial *generateMaterial(const QString &textureName);
+    Qt3DRender::QMaterial *generateMaterial(const QString &textureName);
 
-    QMap<QString,Qt3D::QMaterial*> m_tileFaceMaterials;
-    Qt3D::QMaterial *m_tileMaterial;
-    Qt3D::QMaterial *m_tileSelectedMaterial;
-    Qt3D::QMesh *m_tileMesh;
-    Qt3D::QMesh *m_tilefaceMesh;
+    QMap<QString,Qt3DRender::QMaterial*> m_tileFaceMaterials;
+    Qt3DRender::QMaterial *m_tileMaterial;
+    Qt3DRender::QMaterial *m_tileSelectedMaterial;
+    Qt3DRender::QMesh *m_tileMesh;
+    Qt3DRender::QMesh *m_tilefaceMesh;
 
 };
 

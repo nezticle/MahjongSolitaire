@@ -1,8 +1,8 @@
 #include "mahjongsharedresources.h"
 
-#include <Qt3DRenderer/QDiffuseMapMaterial>
-#include <Qt3DRenderer/QTextureImage>
-#include <Qt3DRenderer/QMesh>
+#include <Qt3DRender/QDiffuseMapMaterial>
+#include <Qt3DRender/QTextureImage>
+#include <Qt3DRender/QMesh>
 
 MahjongSharedResources &MahjongSharedResources::instance()
 {
@@ -10,27 +10,27 @@ MahjongSharedResources &MahjongSharedResources::instance()
     return instance;
 }
 
-Qt3D::QMaterial *MahjongSharedResources::materialForTileface(const QString &tileface)
+Qt3DRender::QMaterial *MahjongSharedResources::materialForTileface(const QString &tileface)
 {
     return m_tileFaceMaterials[tileface];
 }
 
-Qt3D::QMaterial *MahjongSharedResources::tileMaterial()
+Qt3DRender::QMaterial *MahjongSharedResources::tileMaterial()
 {
     return m_tileMaterial;
 }
 
-Qt3D::QMaterial *MahjongSharedResources::tileSelectedMaterial()
+Qt3DRender::QMaterial *MahjongSharedResources::tileSelectedMaterial()
 {
     return m_tileSelectedMaterial;
 }
 
-Qt3D::QMesh *MahjongSharedResources::tileMesh()
+Qt3DRender::QMesh *MahjongSharedResources::tileMesh()
 {
     return m_tileMesh;
 }
 
-Qt3D::QMesh *MahjongSharedResources::tilefaceMesh()
+Qt3DRender::QMesh *MahjongSharedResources::tilefaceMesh()
 {
     return m_tilefaceMesh;
 }
@@ -49,11 +49,11 @@ void MahjongSharedResources::initSharedResources()
     m_tileSelectedMaterial = generateMaterial("TileSelected_diffuse");
 
     //Tile Mesh
-    m_tileMesh = new Qt3D::QMesh();
+    m_tileMesh = new Qt3DRender::QMesh();
     m_tileMesh->setSource(QUrl("qrc:/models/MahjongTile.obj"));
 
     //Tileface Mesh
-    m_tilefaceMesh = new Qt3D::QMesh();
+    m_tilefaceMesh = new Qt3DRender::QMesh();
     m_tilefaceMesh->setSource(QUrl("qrc:/models/MahjongTileface.obj"));
 
     m_tileFaceMaterials.insert("b1", generateMaterial("bamboo1"));
@@ -100,12 +100,15 @@ void MahjongSharedResources::initSharedResources()
     m_tileFaceMaterials.insert("s4", generateMaterial("season4"));
 }
 
-Qt3D::QMaterial *MahjongSharedResources::generateMaterial(const QString &textureName)
+Qt3DRender::QMaterial *MahjongSharedResources::generateMaterial(const QString &textureName)
 {
-    Qt3D::QDiffuseMapMaterial *material = new Qt3D::QDiffuseMapMaterial;
-    Qt3D::QTextureImage *diffuseTexture = new Qt3D::QTextureImage;
+    Qt3DRender::QDiffuseMapMaterial *material = new Qt3DRender::QDiffuseMapMaterial;
+    Qt3DRender::QTextureImage *diffuseTexture = new Qt3DRender::QTextureImage;
     diffuseTexture->setSource(QUrl(QString("qrc:/textures/" + textureName + ".png")));
     material->diffuse()->addTextureImage(diffuseTexture);
+
+    material->diffuse()->setMinificationFilter(Qt3DRender::QAbstractTextureProvider::LinearMipMapLinear);
+
     return material;
 }
 
