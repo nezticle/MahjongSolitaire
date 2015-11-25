@@ -8,8 +8,7 @@ class MahjongBoardLayoutItem;
 class MahjongTileEntity;
 
 namespace Qt3DCore {
-    class QTranslateTransform;
-    class QScaleTransform;
+    class QTransform;
 }
 
 class MahjongBoard : public Qt3DCore::QEntity
@@ -63,9 +62,7 @@ private:
     int m_tilesLeft;
     QString m_hints;
 
-    Qt3DCore::QTranslateTransform *m_translate;
-    Qt3DCore::QScaleTransform *m_scale;
-
+    Qt3DCore::QTransform *m_transform;
 };
 
 #endif // MAHJONGBOARD_H

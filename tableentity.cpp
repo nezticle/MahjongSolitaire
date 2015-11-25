@@ -1,152 +1,148 @@
 #include "tableentity.h"
 
 #include <Qt3DCore/QTransform>
-#include <Qt3DCore/QTranslateTransform>
-#include <Qt3DCore/QRotateTransform>
-#include <Qt3dCore/QScaleTransform>
 
-#include <Qt3DRender/QDiffuseSpecularMapMaterial>
-#include <Qt3DRender/QTextureImage>
-#include <Qt3DRender/QAbstractTextureProvider>
+#include <Qt3DRender/QPhongMaterial>
 #include <Qt3DRender/QMesh>
+#include <Qt3DRender/QPlaneMesh>
 
 TableEntity::TableEntity(Qt3DCore::QNode *parent)
     : Qt3DCore::QEntity(parent)
 {
-    //Mesh
-    m_mesh = new Qt3DRender::QMesh(this);
-    m_mesh->setSource(QUrl("qrc:/models/XYPlane.obj"));
-    addComponent(m_mesh);
+    // Mesh
+    Qt3DRender::QPlaneMesh *mesh = new Qt3DRender::QPlaneMesh(this);
+    mesh->setHeight(1.0f);
+    mesh->setWidth(1.0f);
+    mesh->setMeshResolution(QSize(2, 2));
 
-    //Material
-    Qt3DRender::QTextureImage *diffuseTexture = new Qt3DRender::QTextureImage;
-    diffuseTexture->setSource(QUrl("qrc:/textures/wicker_diffuse.png"));
-    Qt3DRender::QTextureImage *specularTexture = new Qt3DRender::QTextureImage;
-    specularTexture->setSource(QUrl("qrc:/textures/wicker_specular.png"));
+    addComponent(mesh);
 
-    Qt3DRender::QDiffuseSpecularMapMaterial *material = new Qt3DRender::QDiffuseSpecularMapMaterial(this);
-    material->diffuse()->addTextureImage(diffuseTexture);
-    material->diffuse()->setGenerateMipMaps(false);
-    material->diffuse()->setMagnificationFilter(Qt3DRender::QAbstractTextureProvider::Linear);
-    material->specular()->addTextureImage(specularTexture);
-    material->specular()->setGenerateMipMaps(false);
-    material->specular()->setMagnificationFilter(Qt3DRender::QAbstractTextureProvider::Linear);
-    material->setShininess(0.5f);
-    addComponent(material);
+    // Material
+    Qt3DRender::QPhongMaterial *phongMaterial = new Qt3DRender::QPhongMaterial(this);
+    phongMaterial->setDiffuse(QColor(70, 150, 56));
+    addComponent(phongMaterial);
 
-    //Transform
-    Qt3DCore::QTransform *transform = new Qt3DCore::QTransform(this);
-    m_translate = new Qt3DCore::QTranslateTransform;
-    transform->addTransform(m_translate);
-    m_rotationX = new Qt3DCore::QRotateTransform;
-    m_rotationX->setAxis(QVector3D(1.0f, 0.0f, 0.0f));
-    transform->addTransform(m_rotationX);
-    m_rotationY = new Qt3DCore::QRotateTransform;
-    m_rotationY->setAxis(QVector3D(0.0f, 1.0f, 0.0f));
-    transform->addTransform(m_rotationY);
-    m_rotationZ = new Qt3DCore::QRotateTransform;
-    m_rotationZ->setAxis(QVector3D(0.0f, 0.0f, 1.0f));
-    transform->addTransform(m_rotationZ);
-    m_scale = new Qt3DCore::QScaleTransform;
-    transform->addTransform(m_scale);
-    addComponent(transform);
+    // Transform
+    m_transform = new Qt3DCore::QTransform(this);
+
+    // Transform the mesh to be XxY instead of XxZ
+    m_transform->setRotation(QQuaternion::fromAxisAndAngle(1.0f, 0.0f, 0.0f, 90.0f));
+
+    addComponent(m_transform);
 }
 
 float TableEntity::x() const
 {
-    return m_translate->dx();
+    return m_transform->translation().x();
 }
 
 float TableEntity::y() const
 {
-    return m_translate->dy();
+    return m_transform->translation().y();
 }
 
 float TableEntity::z() const
 {
-    return m_translate->dz();
+    return m_transform->translation().z();
 }
 
 float TableEntity::rotationX() const
 {
-    return m_rotationX->angleDeg();
+    return m_transform->rotation().toEulerAngles().x();
 }
 
 float TableEntity::rotationY() const
 {
-    return m_rotationY->angleDeg();
+    return m_transform->rotation().toEulerAngles().y();
 }
 
 float TableEntity::rotationZ() const
 {
-    return m_rotationZ->angleDeg();
+    return m_transform->rotation().toEulerAngles().z();
 }
 
 float TableEntity::scale() const
 {
-    return m_scale->scale();
+    return m_transform->scale();
 }
 
 void TableEntity::setX(float x)
 {
-    if (m_translate->dx() == x)
+    if (m_transform->translation().x() == x)
         return;
 
-    m_translate->setDx(x);
+    QVector3D translation = m_transform->translation();
+    translation.setX(x);
+
+    m_transform->setTranslation(translation);
     emit xChanged(x);
 }
 
 void TableEntity::setY(float y)
 {
-    if (m_translate->dy() == y)
+    if (m_transform->translation().y() == y)
         return;
 
-    m_translate->setDy(y);
+    QVector3D translation = m_transform->translation();
+    translation.setY(y);
+
+    m_transform->setTranslation(translation);
     emit yChanged(y);
 }
 
 void TableEntity::setZ(float z)
 {
-    if (m_translate->dz() == z)
+    if (m_transform->translation().z() == z)
         return;
 
-    m_translate->setDz(z);
+    QVector3D translation = m_transform->translation();
+    translation.setZ(z);
+
+    m_transform->setTranslation(translation);
     emit zChanged(z);
 }
 
 void TableEntity::setRotationX(float rotationX)
 {
-    if (m_rotationX->angleDeg() == rotationX)
+    if (m_transform->rotation().toEulerAngles().x() == rotationX)
         return;
 
-    m_rotationX->setAngleDeg(rotationX);
+    QVector3D eulerAngles = m_transform->rotation().toEulerAngles();
+    eulerAngles.setX(rotationX);
+
+    m_transform->setRotation(QQuaternion::fromEulerAngles(eulerAngles));
     emit rotationXChanged(rotationX);
 }
 
 void TableEntity::setRotationY(float rotationY)
 {
-    if (m_rotationY->angleDeg() == rotationY)
+    if (m_transform->rotation().toEulerAngles().y() == rotationY)
         return;
 
-    m_rotationY->setAngleDeg(rotationY);
+    QVector3D eulerAngles = m_transform->rotation().toEulerAngles();
+    eulerAngles.setY(rotationY);
+
+    m_transform->setRotation(QQuaternion::fromEulerAngles(eulerAngles));
     emit rotationYChanged(rotationY);
 }
 
 void TableEntity::setRotationZ(float rotationZ)
 {
-    if (m_rotationZ->angleDeg() == rotationZ)
+    if (m_transform->rotation().toEulerAngles().z() == rotationZ)
         return;
 
-    m_rotationZ->setAngleDeg(rotationZ);
+    QVector3D eulerAngles = m_transform->rotation().toEulerAngles();
+    eulerAngles.setZ(rotationZ);
+
+    m_transform->setRotation(QQuaternion::fromEulerAngles(eulerAngles));
     emit rotationZChanged(rotationZ);
 }
 
 void TableEntity::setScale(float scale)
 {
-    if (m_scale->scale() == scale)
+    if (m_transform->scale() == scale)
         return;
 
-    m_scale->setScale(scale);
-
+    m_transform->setScale(scale);
     emit scaleChanged(scale);
 }

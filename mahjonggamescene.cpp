@@ -5,8 +5,6 @@
 #include <Qt3DCore/QEntity>
 #include <Qt3DCore/QAspectEngine>
 #include <Qt3DCore/QCamera>
-#include <Qt3DCore/QTransform>
-#include <Qt3DCore/QTranslateTransform>
 
 #include <Qt3DRender/QRenderAspect>
 #include <Qt3DRender/QForwardRenderer>
@@ -30,13 +28,13 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     m_camera->setAspectRatio((float)m_viewportSize.width() / (float)m_viewportSize.height());
     m_camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
     m_camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
-    m_camera->setPosition(QVector3D(0.0f, -15.f, 25.0f));
+    m_camera->setPosition(QVector3D(0.0f, -15.0f, 25.0f));
 
     // Forward Renderer FrameGraph
     Qt3DRender::QFrameGraph *frameGraphComponent = new Qt3DRender::QFrameGraph(m_rootEntity);
     Qt3DRender::QForwardRenderer *forwardRenderer = new Qt3DRender::QForwardRenderer();
     forwardRenderer->setCamera(m_camera);
-    forwardRenderer->setClearColor(QColor(Qt::black));
+    forwardRenderer->setClearColor(Qt::black);
     frameGraphComponent->setActiveFrameGraph(forwardRenderer);
     m_rootEntity->addComponent(frameGraphComponent);
 

@@ -1,6 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Window 2.2
-import QtQuick.Controls 1.3
+//import QtQuick.Controls 1.3
 import Qt.labs.settings 1.0
 
 
@@ -24,12 +24,29 @@ Window {
         anchors.fill: parent
     }
 
-    Button {
-        text: "New Game"
+//    Button {
+//        text: "New Game"
+//        anchors.top: parent.top
+//        anchors.right: parent.right
+//        onClicked: {
+//            gameboard.mahjongGame.newGame();
+//        }
+//    }
+
+    Rectangle {
         anchors.top: parent.top
         anchors.right: parent.right
-        onClicked: {
-            gameboard.mahjongGame.newGame();
+        height: 50
+        width: 100
+        MouseArea {
+            anchors.fill: parent
+            onClicked: gameboard.mahjongGame.newGame();
+        }
+
+        Text {
+            id: name
+            text: qsTr("New Game")
+            anchors.centerIn: parent
         }
     }
 }

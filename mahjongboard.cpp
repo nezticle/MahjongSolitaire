@@ -3,8 +3,6 @@
 #include "mahjongboardlayoutitem.h"
 
 #include <Qt3DCore/QTransform>
-#include <Qt3DCore/QTranslateTransform>
-#include <Qt3DCore/QScaleTransform>
 
 #include <QtCore/QTime>
 #include <QtCore/QDebug>
@@ -16,12 +14,11 @@ MahjongBoard::MahjongBoard(Qt3DCore::QNode *parent)
     , m_tilesLeft(0)
 {
     //Transform
-    Qt3DCore::QTransform *transform = new Qt3DCore::QTransform(this);
-    m_translate = new Qt3DCore::QTranslateTransform;
-    transform->addTransform(m_translate);
-    m_scale = new Qt3DCore::QScaleTransform;
-    transform->addTransform(m_scale);
-    addComponent(transform);
+    m_transform = new Qt3DCore::QTransform(this);
+    // Normalize for XxY instead of XxZ
+    m_transform->setRotation(QQuaternion::fromAxisAndAngle(1.0f, 0.0f, 0.0f, -90.0f));
+
+    addComponent(m_transform);
 
     //Create all of the tile items
     initTiles();
@@ -33,12 +30,12 @@ MahjongBoard::~MahjongBoard()
 
 QVector3D MahjongBoard::translate() const
 {
-    return m_translate->translation();
+    return m_transform->translation();
 }
 
 float MahjongBoard::scale() const
 {
-    return m_scale->scale();
+    return m_transform->scale();
 }
 
 void MahjongBoard::newGame()
@@ -49,19 +46,19 @@ void MahjongBoard::newGame()
 
 void MahjongBoard::setTranslate(QVector3D translate)
 {
-    if (m_translate->translation() == translate)
+    if (m_transform->translation() == translate)
         return;
 
-    m_translate->setTranslation(translate);
+    m_transform->setTranslation(translate);
     emit translateChanged(translate);
 }
 
 void MahjongBoard::setScale(float scale)
 {
-    if (m_scale->scale() == scale)
+    if (m_transform->scale() == scale)
         return;
 
-    m_scale->setScale(scale);
+    m_transform->setScale(scale);
     emit scaleChanged(scale);
 }
 

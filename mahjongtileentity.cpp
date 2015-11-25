@@ -4,12 +4,13 @@
 #include "mahjongsharedresources.h"
 
 #include <Qt3DCore/QTransform>
-#include <Qt3DCore/QTranslateTransform>
-#include <Qt3DCore/QScaleTransform>
 
 #include <Qt3DRender/QMesh>
 #include <Qt3DRender/QTextureImage>
 #include <Qt3DRender/QDiffuseMapMaterial>
+#include <Qt3DRender/QObjectPicker>
+#include <Qt3DRender/QPickEvent>
+//#include <Qt3DRender/QBoundingVolumeDebug>
 
 class MahjongTilefaceEntity : public Qt3DCore::QEntity
 {
@@ -19,11 +20,9 @@ public:
         , m_material(Q_NULLPTR)
     {
         //Transform
-        Qt3DCore::QTransform *transformComponent = new Qt3DCore::QTransform(this);
-        Qt3DCore::QTranslateTransform *translate = new Qt3DCore::QTranslateTransform;
-        transformComponent->addTransform(translate);
-        translate->setDz(MahjongTileEntity::tileDepth() * 0.5 + 0.0001f);
-        addComponent(transformComponent);
+        Qt3DCore::QTransform *transform = new Qt3DCore::QTransform(this);
+        transform->setTranslation(QVector3D(0.0f, 0.0f, MahjongTileEntity::tileDepth() * 0.5f + 0.0001f));
+        addComponent(transform);
 
         //Mesh
         addComponent(MahjongSharedResources::instance().tilefaceMesh());
@@ -55,18 +54,24 @@ MahjongTileEntity::MahjongTileEntity(Qt3DCore::QNode *parent)
     , m_tileFace(new MahjongTilefaceEntity(this))
 {
     //Transform
-    Qt3DCore::QTransform *transformComponent = new Qt3DCore::QTransform(this);
-    m_translate = new Qt3DCore::QTranslateTransform;
-    m_scale = new Qt3DCore::QScaleTransform;
-    transformComponent->addTransform(m_translate);
-    transformComponent->addTransform(m_scale);
-    addComponent(transformComponent);
+    m_transform = new Qt3DCore::QTransform(this);
+    addComponent(m_transform);
 
     //Mesh
     addComponent(MahjongSharedResources::instance().tileMesh());
 
     //Material
     addComponent(MahjongSharedResources::instance().tileMaterial());
+
+    //Input
+    Qt3DRender::QObjectPicker *objectPicker = new Qt3DRender::QObjectPicker(this);
+    objectPicker->setHoverEnabled(false);
+    connect(objectPicker, SIGNAL(clicked(Qt3DRender::QPickEvent*)), this, SLOT(processTouched(Qt3DRender::QPickEvent*)));
+    addComponent(objectPicker);
+
+//    Qt3DRender::QBoundingVolumeDebug *bvDebug = new Qt3DRender::QBoundingVolumeDebug(this);
+//    bvDebug->setRecursive(false);
+//    addComponent(bvDebug);
 
     setEnabled(false);
 }
@@ -83,12 +88,12 @@ QString MahjongTileEntity::faceValue() const
 
 QVector3D MahjongTileEntity::translate() const
 {
-    return m_translate->translation();
+    return m_transform->translation();
 }
 
 QVector3D MahjongTileEntity::scale() const
 {
-    return m_scale->scale3D();
+    return m_transform->scale3D();
 }
 
 MahjongBoardLayoutItem *MahjongTileEntity::boardPosition() const
@@ -150,19 +155,19 @@ void MahjongTileEntity::setFaceValue(const QString &value)
 
 void MahjongTileEntity::setTranslate(QVector3D translate)
 {
-    if (m_translate->translation() == translate)
+    if (m_transform->translation() == translate)
         return;
 
-    m_translate->setTranslation(translate);
+    m_transform->setTranslation(translate);
     emit translateChanged(translate);
 }
 
 void MahjongTileEntity::setScale(QVector3D scale)
 {
-    if (m_scale->scale3D() == scale)
+    if (m_transform->scale3D() == scale)
         return;
 
-    m_scale->setScale3D(scale);
+    m_transform->setScale3D(scale);
     emit scaleChanged(scale);
 }
 
@@ -175,4 +180,17 @@ void MahjongTileEntity::setVisible(bool visible)
     setEnabled(m_visible);
 
     emit visibleChanged(visible);
+}
+
+void MahjongTileEntity::processTouched(Qt3DRender::QPickEvent *event)
+{
+    //Ignore pick events if the entity is disabled
+    if (!isEnabled()) {
+        event->setAccepted(false);
+        return;
+    }
+
+    //inform that the tile has been touched
+    qDebug() << "tile touched";
+    event->setAccepted(true);
 }

@@ -3,6 +3,9 @@
 #include <Qt3DRender/QDiffuseMapMaterial>
 #include <Qt3DRender/QTextureImage>
 #include <Qt3DRender/QMesh>
+#include <Qt3DRender/QAttribute>
+
+#include <Qt3DCore/QAbstractAttribute>
 
 MahjongSharedResources &MahjongSharedResources::instance()
 {

@@ -12,19 +12,18 @@ Item {
         id: sceneItem
         anchors.fill: gameboard
         entity: gameScene.rootEntity
-        aspects: "collision"
     }
 
-    MouseArea {
-        id: mahjongMouseArea
-        anchors.fill: sceneItem
-        onClicked: {
-            //Process mouse click in MahjongGameScene
-            if (mouse.button == Qt.LeftButton) {
-                gameScene.processInput(mouse.x, mouse.y);
-            }
-        }
-    }
+//    MouseArea {
+//        id: mahjongMouseArea
+//        anchors.fill: sceneItem
+//        onClicked: {
+//            //Process mouse click in MahjongGameScene
+//            if (mouse.button == Qt.LeftButton) {
+//                gameScene.processInput(mouse.x, mouse.y);
+//            }
+//        }
+//    }
 
     MahjongGameScene {
         id: gameScene

@@ -7,6 +7,7 @@
 namespace Qt3DRender {
     class QMaterial;
     class QMesh;
+    class QAttribute;
 }
 
 class MahjongSharedResources

@@ -4,9 +4,7 @@
 #include <Qt3DCore/QEntity>
 
 namespace Qt3DCore {
-    class QTranslateTransform;
-    class QRotateTransform;
-    class QScaleTransform;
+    class QTransform;
 }
 
 namespace Qt3DRender {
@@ -58,12 +56,7 @@ signals:
     void scaleChanged(float scale);
 
 private:
-    Qt3DCore::QTranslateTransform *m_translate;
-    Qt3DCore::QRotateTransform *m_rotationX;
-    Qt3DCore::QRotateTransform *m_rotationY;
-    Qt3DCore::QRotateTransform *m_rotationZ;
-    Qt3DCore::QScaleTransform *m_scale;
-    Qt3DRender::QMesh *m_mesh;
+    Qt3DCore::QTransform *m_transform;
 };
 
 #endif // TABLEENTITY_H
