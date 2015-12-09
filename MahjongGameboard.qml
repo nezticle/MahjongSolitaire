@@ -12,7 +12,21 @@ Item {
         id: sceneItem
         anchors.fill: gameboard
         entity: gameScene.rootEntity
+        aspects: "input"
     }
+
+    Configuration  {
+        controlledCamera: gameScene.camera
+    }
+
+
+//    Connections {
+//        target: gameScene.camera
+//        onPositionChanged: {
+//            console.log(gameScene.camera.position);
+//        }
+//    }
+
 
 //    MouseArea {
 //        id: mahjongMouseArea

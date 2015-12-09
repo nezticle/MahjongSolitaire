@@ -13,6 +13,7 @@
 #include <Qt3DRender/QMesh>
 #include <Qt3DRender/QDiffuseMapMaterial>
 #include <Qt3DRender/QTextureImage>
+#include <Qt3DRender/QDirectionalLight>
 
 #include "tableentity.h"
 #include "mahjongboard.h"
@@ -25,10 +26,11 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     // Scene Camera
     m_camera = new Qt3DCore::QCamera(m_rootEntity);
     m_camera->setProjectionType(Qt3DCore::QCameraLens::PerspectiveProjection);
-    m_camera->setAspectRatio((float)m_viewportSize.width() / (float)m_viewportSize.height());
+    m_camera->setAspectRatio(static_cast<float>(m_viewportSize.width()) / static_cast<float>(m_viewportSize.height()));
     m_camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
     m_camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
     m_camera->setPosition(QVector3D(0.0f, -15.0f, 25.0f));
+    //m_camera->setPosition(QVector3D(0.0f, 0.0f, 25.0f));
 
     // Forward Renderer FrameGraph
     Qt3DRender::QFrameGraph *frameGraphComponent = new Qt3DRender::QFrameGraph(m_rootEntity);
@@ -45,7 +47,13 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     tableSurface->setScale(18);
 
     m_mahjongBoard = new MahjongBoard(tableSurface);
-    m_mahjongBoard->setScale(0.9);
+    m_mahjongBoard->setScale(0.9f);
+
+    // Scene Lighting
+    auto *directionLightEntity = new Qt3DCore::QEntity(m_rootEntity);
+    auto *directionalLight = new Qt3DRender::QDirectionalLight;
+    directionLightEntity->addComponent(directionalLight);
+    directionalLight->setDirection(QVector3D(0.0f, 0.0f, -1.0f));
 }
 
 MahjongGameScene::~MahjongGameScene()
@@ -63,6 +71,11 @@ QSize MahjongGameScene::viewportSize() const
     return m_viewportSize;
 }
 
+Qt3DCore::QCamera *MahjongGameScene::camera() const
+{
+    return m_camera;
+}
+
 void MahjongGameScene::setViewportSize(QSize viewportSize)
 {
     if (m_viewportSize == viewportSize)
@@ -70,7 +83,7 @@ void MahjongGameScene::setViewportSize(QSize viewportSize)
 
     m_viewportSize = viewportSize;
     if (m_camera != Q_NULLPTR)
-        m_camera->setAspectRatio((float)m_viewportSize.width() / (float)m_viewportSize.height());
+        m_camera->setAspectRatio(static_cast<float>(m_viewportSize.width()) / static_cast<float>(m_viewportSize.height()));
     emit viewportSizeChanged(viewportSize);
 }
 

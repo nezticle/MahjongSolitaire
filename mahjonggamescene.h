@@ -19,12 +19,14 @@ class MahjongGameScene : public QObject
     Q_OBJECT
     Q_PROPERTY(Qt3DCore::QEntity* rootEntity READ rootEntity CONSTANT)
     Q_PROPERTY(QSize viewportSize READ viewportSize WRITE setViewportSize NOTIFY viewportSizeChanged)
+    Q_PROPERTY(Qt3DCore::QCamera* camera READ camera CONSTANT)
 public:
     explicit MahjongGameScene(QObject *parent = 0);
     ~MahjongGameScene();
 
     Qt3DCore::QEntity *rootEntity() const;
     QSize viewportSize() const;
+    Qt3DCore::QCamera *camera() const;
 
 signals:
     void viewportSizeChanged(QSize viewportSize);
