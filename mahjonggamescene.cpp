@@ -30,7 +30,6 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     m_camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
     m_camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
     m_camera->setPosition(QVector3D(0.0f, -15.0f, 25.0f));
-    //m_camera->setPosition(QVector3D(0.0f, 0.0f, 25.0f));
 
     // Forward Renderer FrameGraph
     Qt3DRender::QFrameGraph *frameGraphComponent = new Qt3DRender::QFrameGraph(m_rootEntity);
@@ -53,7 +52,7 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     auto *directionLightEntity = new Qt3DCore::QEntity(m_rootEntity);
     auto *directionalLight = new Qt3DRender::QDirectionalLight;
     directionLightEntity->addComponent(directionalLight);
-    directionalLight->setDirection(QVector3D(0.0f, 0.0f, -1.0f));
+    directionalLight->setDirection(QVector3D(8.0f, 15.0f, -25.0f));
 }
 
 MahjongGameScene::~MahjongGameScene()

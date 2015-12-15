@@ -12,31 +12,11 @@ Item {
         id: sceneItem
         anchors.fill: gameboard
         entity: gameScene.rootEntity
-        aspects: "input"
+        //aspects: "input"
     }
 
-    Configuration  {
-        controlledCamera: gameScene.camera
-    }
-
-
-//    Connections {
-//        target: gameScene.camera
-//        onPositionChanged: {
-//            console.log(gameScene.camera.position);
-//        }
-//    }
-
-
-//    MouseArea {
-//        id: mahjongMouseArea
-//        anchors.fill: sceneItem
-//        onClicked: {
-//            //Process mouse click in MahjongGameScene
-//            if (mouse.button == Qt.LeftButton) {
-//                gameScene.processInput(mouse.x, mouse.y);
-//            }
-//        }
+//    Configuration  {
+//        controlledCamera: gameScene.camera
 //    }
 
     MahjongGameScene {
