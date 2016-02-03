@@ -53,7 +53,8 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     auto *directionLightEntity = new Qt3DCore::QEntity(m_rootEntity);
     auto *directionalLight = new Qt3DRender::QDirectionalLight;
     directionLightEntity->addComponent(directionalLight);
-    directionalLight->setDirection(QVector3D(0.0f, 0.0f, -1.0f));
+    directionalLight->setDirection(QVector3D(0.1f, 0.5f, -0.5f));
+    directionalLight->setAmbientIntensity(1.0);
 }
 
 MahjongGameScene::~MahjongGameScene()

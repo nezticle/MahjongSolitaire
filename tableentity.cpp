@@ -20,6 +20,7 @@ TableEntity::TableEntity(Qt3DCore::QNode *parent)
     // Material
     Qt3DRender::QPhongMaterial *phongMaterial = new Qt3DRender::QPhongMaterial(this);
     phongMaterial->setDiffuse(QColor(70, 150, 56));
+    phongMaterial->setShininess(10.f);
     addComponent(phongMaterial);
 
     // Transform

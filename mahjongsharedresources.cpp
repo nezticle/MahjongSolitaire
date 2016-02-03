@@ -109,8 +109,8 @@ Qt3DRender::QMaterial *MahjongSharedResources::generateMaterial(const QString &t
     Qt3DRender::QTextureImage *diffuseTexture = new Qt3DRender::QTextureImage;
     diffuseTexture->setSource(QUrl(QString("qrc:/textures/" + textureName + ".png")));
     material->diffuse()->addTextureImage(diffuseTexture);
-
     material->diffuse()->setMinificationFilter(Qt3DRender::QAbstractTextureProvider::LinearMipMapLinear);
+    material->setAmbient(QColor(20, 20, 20));
 
     return material;
 }
