@@ -15,10 +15,6 @@ Item {
         aspects: "input"
     }
 
-    Configuration  {
-        controlledCamera: gameScene.camera
-    }
-
 
 //    Connections {
 //        target: gameScene.camera

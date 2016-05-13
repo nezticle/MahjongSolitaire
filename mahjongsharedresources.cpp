@@ -1,11 +1,9 @@
 #include "mahjongsharedresources.h"
 
-#include <Qt3DRender/QDiffuseMapMaterial>
+#include <Qt3DExtras/QDiffuseMapMaterial>
 #include <Qt3DRender/QTextureImage>
 #include <Qt3DRender/QMesh>
 #include <Qt3DRender/QAttribute>
-
-#include <Qt3DCore/QAbstractAttribute>
 
 MahjongSharedResources &MahjongSharedResources::instance()
 {
@@ -105,11 +103,11 @@ void MahjongSharedResources::initSharedResources()
 
 Qt3DRender::QMaterial *MahjongSharedResources::generateMaterial(const QString &textureName)
 {
-    Qt3DRender::QDiffuseMapMaterial *material = new Qt3DRender::QDiffuseMapMaterial;
+    Qt3DExtras::QDiffuseMapMaterial *material = new Qt3DExtras::QDiffuseMapMaterial;
     Qt3DRender::QTextureImage *diffuseTexture = new Qt3DRender::QTextureImage;
     diffuseTexture->setSource(QUrl(QString("qrc:/textures/" + textureName + ".png")));
     material->diffuse()->addTextureImage(diffuseTexture);
-    material->diffuse()->setMinificationFilter(Qt3DRender::QAbstractTextureProvider::LinearMipMapLinear);
+    material->diffuse()->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
     material->setAmbient(QColor(20, 20, 20));
 
     return material;
