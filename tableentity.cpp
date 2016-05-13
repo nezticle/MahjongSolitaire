@@ -2,15 +2,15 @@
 
 #include <Qt3DCore/QTransform>
 
-#include <Qt3DRender/QPhongMaterial>
+#include <Qt3DExtras/QPhongMaterial>
 #include <Qt3DRender/QMesh>
-#include <Qt3DRender/QPlaneMesh>
+#include <Qt3DExtras/QPlaneMesh>
 
 TableEntity::TableEntity(Qt3DCore::QNode *parent)
     : Qt3DCore::QEntity(parent)
 {
     // Mesh
-    Qt3DRender::QPlaneMesh *mesh = new Qt3DRender::QPlaneMesh(this);
+    Qt3DExtras::QPlaneMesh *mesh = new Qt3DExtras::QPlaneMesh(this);
     mesh->setHeight(1.0f);
     mesh->setWidth(1.0f);
     mesh->setMeshResolution(QSize(2, 2));
@@ -18,9 +18,9 @@ TableEntity::TableEntity(Qt3DCore::QNode *parent)
     addComponent(mesh);
 
     // Material
-    Qt3DRender::QPhongMaterial *phongMaterial = new Qt3DRender::QPhongMaterial(this);
+    Qt3DExtras::QPhongMaterial *phongMaterial = new Qt3DExtras::QPhongMaterial(this);
     phongMaterial->setDiffuse(QColor(70, 150, 56));
-    phongMaterial->setShininess(5);
+    phongMaterial->setShininess(10.f);
     addComponent(phongMaterial);
 
     // Transform

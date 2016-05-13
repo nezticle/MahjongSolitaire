@@ -7,7 +7,7 @@
 
 #include <Qt3DRender/QMesh>
 #include <Qt3DRender/QTextureImage>
-#include <Qt3DRender/QDiffuseMapMaterial>
+#include <Qt3DExtras/QDiffuseMapMaterial>
 #include <Qt3DRender/QObjectPicker>
 #include <Qt3DRender/QPickEvent>
 //#include <Qt3DRender/QBoundingVolumeDebug>

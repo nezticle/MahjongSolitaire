@@ -1,4 +1,4 @@
-QT += gui quick 3dcore 3drender
+QT += gui quick 3dcore 3drender 3dextras 3dinput
 
 SOURCES += \
     main.cpp \

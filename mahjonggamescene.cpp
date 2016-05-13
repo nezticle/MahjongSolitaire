@@ -4,16 +4,18 @@
 
 #include <Qt3DCore/QEntity>
 #include <Qt3DCore/QAspectEngine>
-#include <Qt3DCore/QCamera>
+#include <Qt3DRender/QCamera>
 
 #include <Qt3DRender/QRenderAspect>
-#include <Qt3DRender/QForwardRenderer>
-#include <Qt3DRender/QFrameGraph>
+#include <Qt3DExtras/QForwardRenderer>
+#include <Qt3DRender/QRenderSettings>
 #include <Qt3DRender/QTextureImage>
 #include <Qt3DRender/QMesh>
-#include <Qt3DRender/QDiffuseMapMaterial>
+#include <Qt3DExtras/QDiffuseMapMaterial>
 #include <Qt3DRender/QTextureImage>
 #include <Qt3DRender/QDirectionalLight>
+
+#include <Qt3DInput/QInputSettings>
 
 #include "tableentity.h"
 #include "mahjongboard.h"
@@ -24,20 +26,23 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     , m_viewportSize(QSize(800,600))
 {
     // Scene Camera
-    m_camera = new Qt3DCore::QCamera(m_rootEntity);
-    m_camera->setProjectionType(Qt3DCore::QCameraLens::PerspectiveProjection);
+    m_camera = new Qt3DRender::QCamera(m_rootEntity);
+    m_camera->setProjectionType(Qt3DRender::QCameraLens::PerspectiveProjection);
     m_camera->setAspectRatio(static_cast<float>(m_viewportSize.width()) / static_cast<float>(m_viewportSize.height()));
     m_camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
     m_camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
     m_camera->setPosition(QVector3D(0.0f, -15.0f, 25.0f));
 
     // Forward Renderer FrameGraph
-    Qt3DRender::QFrameGraph *frameGraphComponent = new Qt3DRender::QFrameGraph(m_rootEntity);
-    Qt3DRender::QForwardRenderer *forwardRenderer = new Qt3DRender::QForwardRenderer();
+    Qt3DRender::QRenderSettings *frameGraphComponent = new Qt3DRender::QRenderSettings(m_rootEntity);
+    Qt3DExtras::QForwardRenderer *forwardRenderer = new Qt3DExtras::QForwardRenderer();
     forwardRenderer->setCamera(m_camera);
     forwardRenderer->setClearColor(Qt::black);
     frameGraphComponent->setActiveFrameGraph(forwardRenderer);
     m_rootEntity->addComponent(frameGraphComponent);
+
+    auto inputSettings = new Qt3DInput::QInputSettings(m_rootEntity);
+    m_rootEntity->addComponent(inputSettings);
 
     TableEntity *tableSurface = new TableEntity(m_rootEntity);
     tableSurface->setX(0.0f);
@@ -52,7 +57,8 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     auto *directionLightEntity = new Qt3DCore::QEntity(m_rootEntity);
     auto *directionalLight = new Qt3DRender::QDirectionalLight;
     directionLightEntity->addComponent(directionalLight);
-    directionalLight->setDirection(QVector3D(8.0f, 15.0f, -25.0f));
+    directionalLight->setWorldDirection(QVector3D(0.1f, 0.5f, -0.5f));
+    directionalLight->setIntensity(1);
 }
 
 MahjongGameScene::~MahjongGameScene()
@@ -70,7 +76,7 @@ QSize MahjongGameScene::viewportSize() const
     return m_viewportSize;
 }
 
-Qt3DCore::QCamera *MahjongGameScene::camera() const
+Qt3DRender::QCamera *MahjongGameScene::camera() const
 {
     return m_camera;
 }

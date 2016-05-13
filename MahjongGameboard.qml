@@ -12,12 +12,7 @@ Item {
         id: sceneItem
         anchors.fill: gameboard
         entity: gameScene.rootEntity
-        //aspects: "input"
     }
-
-//    Configuration  {
-//        controlledCamera: gameScene.camera
-//    }
 
     MahjongGameScene {
         id: gameScene
