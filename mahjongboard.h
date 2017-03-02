@@ -29,6 +29,8 @@ public slots:
     void setTranslate(QVector3D translate);
     void setScale(float scale);
 
+    void checkTileTouched(MahjongTileEntity *tile);
+
 signals:
     void translateChanged(QVector3D translate);
     void scaleChanged(float scale);

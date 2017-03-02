@@ -19,6 +19,7 @@ namespace Qt3DRender {
     class QPickEvent;
 }
 
+class MahjongBoard;
 class MahjongTileEntity : public Qt3DCore::QEntity
 {
     Q_OBJECT
@@ -29,7 +30,7 @@ class MahjongTileEntity : public Qt3DCore::QEntity
     Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
 
 public:
-    MahjongTileEntity(Qt3DCore::QNode *parent = 0);
+    MahjongTileEntity(MahjongBoard *board);
 
     bool isSelected() const;
     QString faceValue() const;
@@ -71,6 +72,7 @@ private:
     Qt3DCore::QTransform *m_transform;
     bool m_visible;
     MahjongTilefaceEntity *m_tileFace;
+    MahjongBoard *m_board;
 
 
     static float s_tileWidth;

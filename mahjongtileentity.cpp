@@ -3,6 +3,8 @@
 #include "mahjongboardlayoutitem.h"
 #include "mahjongsharedresources.h"
 
+#include "mahjongboard.h"
+
 #include <Qt3DCore/QTransform>
 
 #include <Qt3DRender/QMesh>
@@ -10,7 +12,6 @@
 #include <Qt3DExtras/QDiffuseMapMaterial>
 #include <Qt3DRender/QObjectPicker>
 #include <Qt3DRender/QPickEvent>
-//#include <Qt3DRender/QBoundingVolumeDebug>
 
 class MahjongTilefaceEntity : public Qt3DCore::QEntity
 {
@@ -46,12 +47,13 @@ float MahjongTileEntity::s_tileWidth = 0.074f;
 float MahjongTileEntity::s_tileHeight = 0.10f;
 float MahjongTileEntity::s_tileDepth = 0.03f;
 
-MahjongTileEntity::MahjongTileEntity(Qt3DCore::QNode *parent)
-    : Qt3DCore::QEntity(parent)
+MahjongTileEntity::MahjongTileEntity(MahjongBoard *board)
+    : Qt3DCore::QEntity(board)
     , m_boardPosition(Q_NULLPTR)
     , m_selected(false)
     , m_visible(false)
     , m_tileFace(new MahjongTilefaceEntity(this))
+    , m_board(board)
 {
     //Transform
     m_transform = new Qt3DCore::QTransform(this);
@@ -66,14 +68,12 @@ MahjongTileEntity::MahjongTileEntity(Qt3DCore::QNode *parent)
     //Input
     Qt3DRender::QObjectPicker *objectPicker = new Qt3DRender::QObjectPicker(this);
     objectPicker->setHoverEnabled(false);
+    objectPicker->setDragEnabled(false);
     connect(objectPicker, SIGNAL(clicked(Qt3DRender::QPickEvent*)), this, SLOT(processTouched(Qt3DRender::QPickEvent*)));
     addComponent(objectPicker);
 
-//    Qt3DRender::QBoundingVolumeDebug *bvDebug = new Qt3DRender::QBoundingVolumeDebug(this);
-//    bvDebug->setRecursive(false);
-//    addComponent(bvDebug);
-
     setEnabled(false);
+    m_tileFace->setEnabled(false);
 }
 
 bool MahjongTileEntity::isSelected() const
@@ -178,6 +178,7 @@ void MahjongTileEntity::setVisible(bool visible)
 
     m_visible = visible;
     setEnabled(m_visible);
+    m_tileFace->setEnabled(m_visible);
 
     emit visibleChanged(visible);
 }
@@ -191,6 +192,7 @@ void MahjongTileEntity::processTouched(Qt3DRender::QPickEvent *event)
     }
 
     //inform that the tile has been touched
-    qDebug() << "tile touched";
+    m_board->checkTileTouched(this);
+    //qDebug() << "tile touched";
     event->setAccepted(true);
 }

@@ -1,6 +1,5 @@
 import QtQuick 2.5
 import QtQuick.Window 2.2
-//import QtQuick.Controls 1.3
 import Qt.labs.settings 1.0
 
 
@@ -22,16 +21,9 @@ Window {
     MahjongGameboard {
         id: gameboard
         anchors.fill: parent
+        inputSource: window
+        focus: true;
     }
-
-//    Button {
-//        text: "New Game"
-//        anchors.top: parent.top
-//        anchors.right: parent.right
-//        onClicked: {
-//            gameboard.mahjongGame.newGame();
-//        }
-//    }
 
     Rectangle {
         anchors.top: parent.top

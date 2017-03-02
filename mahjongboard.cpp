@@ -62,6 +62,54 @@ void MahjongBoard::setScale(float scale)
     emit scaleChanged(scale);
 }
 
+void MahjongBoard::checkTileTouched(MahjongTileEntity *tile)
+{
+    if (m_firstTile == nullptr) {
+        //If the tile was the first selected
+        if (canBegin(tile->boardPosition())) {
+            //Tile is selectable
+            m_firstTile = tile;
+            tile->setSelected(true);
+        } else {
+            //not selectable
+        }
+    } else {
+        //If a tile is already selected
+        if (m_firstTile == tile) {
+            //if the tile selected is already selected
+            tile->setSelected(false);
+            m_firstTile = nullptr;
+        } else if (canRemove(tile)) {
+            //tiles match, can be removed
+            removeTiles(m_firstTile, tile);
+            //Test Game Over or Victory conditions
+            int possibleMoves = countCombinations();
+            if (possibleMoves == 0) {
+                if (m_tilesLeft == 0) {
+                    //Victory
+                    qDebug() << "you win";
+                    //print("you win");
+                    newGame();
+                } else {
+                    //Game Over
+                    qDebug() << "game over";
+                    //print("game over");
+                    newGame();
+                }
+            }
+            //print(possibleMoves + " possible moves left");
+        } else {
+            //Tiles don't match
+            if (canBegin(tile->boardPosition())) {
+                //But new tile can begin
+                m_firstTile->setSelected(false);
+                m_firstTile = tile;
+                tile->setSelected(true);
+            }
+        }
+    }
+}
+
 void MahjongBoard::initTiles()
 {
     //Create tiles

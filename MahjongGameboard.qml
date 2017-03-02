@@ -7,11 +7,13 @@ Item {
     id: gameboard
 
     property alias mahjongGame: gameScene
+    property alias inputSource: gameScene.inputSource
 
     Scene3D {
         id: sceneItem
         anchors.fill: gameboard
         entity: gameScene.rootEntity
+        aspects: ["input"]
     }
 
     MahjongGameScene {

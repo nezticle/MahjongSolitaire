@@ -2,6 +2,8 @@
 
 #include <QtCore/QDebug>
 
+#include <QtQuick/QQuickWindow>
+
 #include <Qt3DCore/QEntity>
 #include <Qt3DCore/QAspectEngine>
 #include <Qt3DRender/QCamera>
@@ -14,6 +16,7 @@
 #include <Qt3DExtras/QDiffuseMapMaterial>
 #include <Qt3DRender/QTextureImage>
 #include <Qt3DRender/QDirectionalLight>
+#include <Qt3DRender/QPickingSettings>
 
 #include <Qt3DInput/QInputSettings>
 
@@ -24,6 +27,7 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     : QObject(parent)
     , m_rootEntity(new Qt3DCore::QEntity())
     , m_viewportSize(QSize(800,600))
+    , m_inputSource(nullptr)
 {
     // Scene Camera
     m_camera = new Qt3DRender::QCamera(m_rootEntity);
@@ -33,16 +37,18 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     m_camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
     m_camera->setPosition(QVector3D(0.0f, -15.0f, 25.0f));
 
-    // Forward Renderer FrameGraph
-    Qt3DRender::QRenderSettings *frameGraphComponent = new Qt3DRender::QRenderSettings(m_rootEntity);
+    // Forward Renderer
+    Qt3DRender::QRenderSettings *renderSettingsComponent = new Qt3DRender::QRenderSettings(m_rootEntity);
     Qt3DExtras::QForwardRenderer *forwardRenderer = new Qt3DExtras::QForwardRenderer();
     forwardRenderer->setCamera(m_camera);
     forwardRenderer->setClearColor(Qt::black);
-    frameGraphComponent->setActiveFrameGraph(forwardRenderer);
-    m_rootEntity->addComponent(frameGraphComponent);
+    renderSettingsComponent->setActiveFrameGraph(forwardRenderer);
+    auto pickingSettings = renderSettingsComponent->pickingSettings();
+    pickingSettings->setPickResultMode(Qt3DRender::QPickingSettings::NearestPick);
+    m_rootEntity->addComponent(renderSettingsComponent);
 
-    auto inputSettings = new Qt3DInput::QInputSettings(m_rootEntity);
-    m_rootEntity->addComponent(inputSettings);
+    m_inputSettings = new Qt3DInput::QInputSettings(m_rootEntity);
+    m_rootEntity->addComponent(m_inputSettings);
 
     TableEntity *tableSurface = new TableEntity(m_rootEntity);
     tableSurface->setX(0.0f);
@@ -81,6 +87,11 @@ Qt3DRender::QCamera *MahjongGameScene::camera() const
     return m_camera;
 }
 
+QQuickWindow *MahjongGameScene::inputSource() const
+{
+    return m_inputSource;
+}
+
 void MahjongGameScene::setViewportSize(QSize viewportSize)
 {
     if (m_viewportSize == viewportSize)
@@ -100,5 +111,15 @@ void MahjongGameScene::newGame()
 void MahjongGameScene::processInput(int x, int y)
 {
     qDebug() << "Input event at(" << x << "," << y << ")";
+}
+
+void MahjongGameScene::setInputSource(QQuickWindow *inputSource)
+{
+    if (m_inputSource == inputSource)
+        return;
+
+    m_inputSource = inputSource;
+    emit inputSourceChanged(inputSource);
+    m_inputSettings->setEventSource(inputSource);
 }
 
