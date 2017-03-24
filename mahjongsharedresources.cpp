@@ -57,6 +57,54 @@ void MahjongSharedResources::initSharedResources()
     m_tilefaceMesh = new Qt3DRender::QMesh();
     m_tilefaceMesh->setSource(QUrl("qrc:/models/MahjongTileface.obj"));
 
+    //Texture Atlas
+    m_textureAtlas = new TextureAtlas();
+
+    addImageToAtlas("qrc:/textures/bamboo1.png", "b1");
+    addImageToAtlas("qrc:/textures/bamboo2.png", "b2");
+    addImageToAtlas("qrc:/textures/bamboo3.png", "b3");
+    addImageToAtlas("qrc:/textures/bamboo4.png", "b4");
+    addImageToAtlas("qrc:/textures/bamboo5.png", "b5");
+    addImageToAtlas("qrc:/textures/bamboo6.png", "b6");
+    addImageToAtlas("qrc:/textures/bamboo7.png", "b7");
+    addImageToAtlas("qrc:/textures/bamboo8.png", "b8");
+    addImageToAtlas("qrc:/textures/bamboo9.png", "b9");
+    addImageToAtlas("qrc:/textures/character1.png", "n1");
+    addImageToAtlas("qrc:/textures/character2.png", "n2");
+    addImageToAtlas("qrc:/textures/character3.png", "n3");
+    addImageToAtlas("qrc:/textures/character4.png", "n4");
+    addImageToAtlas("qrc:/textures/character5.png", "n5");
+    addImageToAtlas("qrc:/textures/character6.png", "n6");
+    addImageToAtlas("qrc:/textures/character7.png", "n7");
+    addImageToAtlas("qrc:/textures/character8.png", "n8");
+    addImageToAtlas("qrc:/textures/character9.png", "n9");
+    addImageToAtlas("qrc:/textures/coin1.png", "d1");
+    addImageToAtlas("qrc:/textures/coin2.png", "d2");
+    addImageToAtlas("qrc:/textures/coin3.png", "d3");
+    addImageToAtlas("qrc:/textures/coin4.png", "d4");
+    addImageToAtlas("qrc:/textures/coin5.png", "d5");
+    addImageToAtlas("qrc:/textures/coin6.png", "d6");
+    addImageToAtlas("qrc:/textures/coin7.png", "d7");
+    addImageToAtlas("qrc:/textures/coin8.png", "d8");
+    addImageToAtlas("qrc:/textures/coin9.png", "d9");
+    addImageToAtlas("qrc:/textures/dragon1.png", "z1");
+    addImageToAtlas("qrc:/textures/dragon2.png", "z2");
+    addImageToAtlas("qrc:/textures/dragon3.png", "z3");
+    addImageToAtlas("qrc:/textures/wind1.png", "w1");
+    addImageToAtlas("qrc:/textures/wind2.png", "w2");
+    addImageToAtlas("qrc:/textures/wind3.png", "w3");
+    addImageToAtlas("qrc:/textures/wind4.png", "w4");
+    addImageToAtlas("qrc:/textures/flower1.png", "f1");
+    addImageToAtlas("qrc:/textures/flower2.png", "f2");
+    addImageToAtlas("qrc:/textures/flower3.png", "f3");
+    addImageToAtlas("qrc:/textures/flower4.png", "f4");
+    addImageToAtlas("qrc:/textures/season1.png", "s1");
+    addImageToAtlas("qrc:/textures/season2.png", "s2");
+    addImageToAtlas("qrc:/textures/season3.png", "s3");
+    addImageToAtlas("qrc:/textures/season4.png", "s4");
+    addImageToAtlas("qrc:/textures/Tile_diffuse.png", "tile");
+    addImageToAtlas("qrc:/textures/TileSelected_diffuse.png", "selected");
+
     m_tileFaceMaterials.insert("b1", generateMaterial("bamboo1"));
     m_tileFaceMaterials.insert("b2", generateMaterial("bamboo2"));
     m_tileFaceMaterials.insert("b3", generateMaterial("bamboo3"));
@@ -101,6 +149,7 @@ void MahjongSharedResources::initSharedResources()
     m_tileFaceMaterials.insert("s4", generateMaterial("season4"));
 }
 
+
 Qt3DRender::QMaterial *MahjongSharedResources::generateMaterial(const QString &textureName)
 {
     Qt3DExtras::QDiffuseMapMaterial *material = new Qt3DExtras::QDiffuseMapMaterial;
@@ -111,5 +160,10 @@ Qt3DRender::QMaterial *MahjongSharedResources::generateMaterial(const QString &t
     material->setAmbient(QColor(20, 20, 20));
 
     return material;
+}
+
+void MahjongSharedResources::addImageToAtlas(const QString &filename, const QString &id)
+{
+    m_texturesIds.insert(id, m_textureAtlas->addImage(QImage(filename), 1));
 }
 

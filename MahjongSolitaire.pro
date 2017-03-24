@@ -7,7 +7,10 @@ SOURCES += \
     mahjongtileentity.cpp \
     mahjongboardlayoutitem.cpp \
     mahjongboard.cpp \
-    mahjongsharedresources.cpp
+    mahjongsharedresources.cpp \
+    util/textureatlas.cpp \
+    util/areaallocator.cpp \
+    mahjongtilematerial.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -19,4 +22,7 @@ HEADERS += \
     mahjongtileentity.h \
     mahjongboardlayoutitem.h \
     mahjongboard.h \
-    mahjongsharedresources.h
+    mahjongsharedresources.h \
+    util/textureatlas.h \
+    util/areaallocator.h \
+    mahjongtilematerial.h
