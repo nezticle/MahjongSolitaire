@@ -7,7 +7,7 @@
 #include <Qt3DCore/QEntity>
 
 class MahjongBoardLayoutItem;
-class MahjongTileEntity;
+class MahjongTile;
 class MahjongBoard;
 class QQuickWindow;
 
@@ -28,7 +28,6 @@ class MahjongGameScene : public QObject
     Q_PROPERTY(QQuickWindow* inputSource READ inputSource WRITE setInputSource NOTIFY inputSourceChanged)
 public:
     explicit MahjongGameScene(QObject *parent = 0);
-    ~MahjongGameScene();
 
     Qt3DCore::QEntity *rootEntity() const;
     QSize viewportSize() const;
@@ -42,7 +41,6 @@ signals:
 public slots:
     void setViewportSize(QSize viewportSize);
     void newGame();
-    void processInput(int x, int y);
     void setInputSource(QQuickWindow* inputSource);
 
 private:
@@ -51,7 +49,7 @@ private:
     Qt3DRender::QCamera* m_camera;
     MahjongBoard *m_mahjongBoard;
     Qt3DInput::QInputSettings *m_inputSettings;
-    QQuickWindow* m_inputSource;
+    QQuickWindow* m_inputSource = nullptr;
 };
 
 #endif // MAHJONGGAMESCENE_H

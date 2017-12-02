@@ -1,27 +1,45 @@
 #include "mahjongboard.h"
-#include "mahjongtileentity.h"
+#include "mahjongtile.h"
 #include "mahjongboardlayoutitem.h"
+#include "mahjongtilematerial.h"
 
 #include <Qt3DCore/QTransform>
+#include <Qt3DRender/QBuffer>
+#include <Qt3DRender/QMesh>
+#include <Qt3DRender/QAttribute>
+#include <Qt3DRender/QTextureImage>
 
 #include <QtCore/QTime>
 #include <QtCore/QDebug>
 
 MahjongBoard::MahjongBoard(Qt3DCore::QNode *parent)
     : Qt3DCore::QEntity(parent)
-    , m_gameSeed(0)
-    , m_firstTile(Q_NULLPTR)
-    , m_tilesLeft(0)
 {
     //Transform
     m_transform = new Qt3DCore::QTransform(this);
     // Normalize for XxY instead of XxZ
     m_transform->setRotation(QQuaternion::fromAxisAndAngle(1.0f, 0.0f, 0.0f, -90.0f));
-
     addComponent(m_transform);
 
-    //Create all of the tile items
-    initTiles();
+    // Setup Buffer containing Tile instance data
+    m_tileInstanceBuffer = new Qt3DRender::QBuffer();
+    m_tileInstanceBuffer->setParent(this);
+    resetTileBufferData();
+
+    // Setup Geometry Renderer for Tile
+    m_tileMesh = new Qt3DRender::QMesh(this);
+    m_tileMesh->setSource(QUrl("qrc:/models/MahjongTile_improved.obj"));
+    m_tileMesh->setInstanceCount(m_tiles.count());
+    connect(m_tileMesh, &Qt3DRender::QGeometryRenderer::geometryChanged, [=] () {
+        // Setup Attributes for Tile instances (position, selected, face)
+        setupTileInstanceAttributes();
+    });
+    addComponent(m_tileMesh);
+
+    // Setup Material for rendering tile instances
+    m_material = new MahjongTileMaterial(this);
+    setupTextures();
+    addComponent(m_material);
 }
 
 MahjongBoard::~MahjongBoard()
@@ -51,6 +69,7 @@ void MahjongBoard::setTranslate(QVector3D translate)
 
     m_transform->setTranslation(translate);
     emit translateChanged(translate);
+    updateTileRenderer();
 }
 
 void MahjongBoard::setScale(float scale)
@@ -60,9 +79,10 @@ void MahjongBoard::setScale(float scale)
 
     m_transform->setScale(scale);
     emit scaleChanged(scale);
+    updateTileRenderer();
 }
 
-void MahjongBoard::checkTileTouched(MahjongTileEntity *tile)
+void MahjongBoard::checkTileTouched(MahjongTile *tile)
 {
     if (m_firstTile == nullptr) {
         //If the tile was the first selected
@@ -112,13 +132,16 @@ void MahjongBoard::checkTileTouched(MahjongTileEntity *tile)
 
 void MahjongBoard::initTiles()
 {
-    //Create tiles
+    // Delete previous tiles if available
+    qDeleteAll(m_tiles);
+    m_tiles.clear();
+
+    // Create new tiles
     for (int i = 0; i < 144; ++i) {
-        //Create with no parent to prevent rendering
-        MahjongTileEntity *tile = new MahjongTileEntity(this);
-        tile->setVisible(false);
-        m_tiles.append(tile);
+        m_tiles.append(new MahjongTile(this));
     }
+
+    // Initialize the standard "deck" of tiles
     int currentTarget = 0;
     for (int i = 0; i < 4; i++) {
         for (int j = 1; j <= 9; j++) {
@@ -141,22 +164,18 @@ void MahjongBoard::initTiles()
 
 void MahjongBoard::reset()
 {
-    //Hide all tiles
-    foreach (MahjongTileEntity *tile, m_tiles) {
-        tile->setVisible(false);
-    }
-
-    m_firstTile = Q_NULLPTR;
+    initTiles();
+    m_firstTile = nullptr;
+    updateTileRenderer();
 }
 
 void MahjongBoard::loadLayout()
 {
     //Reset the current layout information
-    foreach (MahjongBoardLayoutItem *boardPosition, m_boardTiles) {
-        delete boardPosition;
-    }
+    qDeleteAll(m_boardTiles);
     m_boardTiles.clear();
 
+    //### TODO add additional layout loader (probably on bitbucket)
     m_boardTiles.append(new MahjongBoardLayoutItem(3, 0, 0));
     m_boardTiles.append(new MahjongBoardLayoutItem(5, 0, 0));
     m_boardTiles.append(new MahjongBoardLayoutItem(7, 0, 0));
@@ -305,18 +324,24 @@ void MahjongBoard::loadLayout()
 
 void MahjongBoard::initGame()
 {
+    // XXX Replace with new Random classes
+    // Try and pick a random function that produces the same
+    // values across machines so we can reuse the seeds.
+    // Also by using our own random instead of the global qrand
+    // we can make sure nothing else is consuming random values
+    // (ex. particle systems)
     qsrand(m_gameSeed);
 
     reset();
 
     loadLayout();
 
-    //Assert that Layout and Tiles are the same size
+    // Assert that Layout and Tiles are the same size
     Q_ASSERT(m_tiles.count() == m_boardTiles.count());
 
-    m_tilesLeft = m_boardTiles.count(); //should be 144
+    m_tilesLeft = m_boardTiles.count(); // should be 144
 
-    //Shuffle the tiles
+    // Shuffle the tiles
     QVector<int> shuffleIndex;
     for (int i = 0; i < m_tiles.count(); ++i)
         shuffleIndex.append(i);
@@ -328,55 +353,56 @@ void MahjongBoard::initGame()
         shuffleIndex[indexToSwap] = oldValue;
     }
 
-    //Place the now sorted tiles in the m_boardTiles structure
+    // Place the now sorted tiles in the m_boardTiles structure
     for (int i = 0; i < m_tiles.count(); ++i) {
-        MahjongTileEntity *tile = m_tiles[shuffleIndex[i]];
+        MahjongTile *tile = m_tiles[shuffleIndex[i]];
         m_boardTiles[i]->setTile(tile);
         tile->setBoardPosition(m_boardTiles[i]);
     }
 
-    //Move tiles into their calculated positions
-    setupTitles();
+    // Move tiles into their calculated positions
+    setupTiles();
+
+    updateTileRenderer();
 }
 
-void MahjongBoard::setupTitles()
+void MahjongBoard::setupTiles()
 {
-    float tileWidthMultiplier = MahjongTileEntity::tileWidth() / 2.0f;
-    float tileHeightMultiplier = MahjongTileEntity::tileHeight() / 2.0f;
-    float tileDepthMultiplier = MahjongTileEntity::tileDepth() / 2.0f;
+    const float tileWidthMultiplier = MahjongTile::tileWidth() / 2.0f;
+    const float tileHeightMultiplier = MahjongTile::tileHeight() / 2.0f;
+    const float tileDepthMultiplier = MahjongTile::tileDepth() / 2.0f;
 
-    QRectF gameboardGeometry;
-    gameboardGeometry.setWidth(tileWidthMultiplier * 32.0f);
-    gameboardGeometry.setHeight(tileHeightMultiplier * 16.0f);
-    gameboardGeometry.setX(-gameboardGeometry.width() / 2.0f);
-    gameboardGeometry.setY(-gameboardGeometry.height() / 2.0f);
+    const float gameboardWidth = tileWidthMultiplier * 32.0f;
+    const float gameboardHeight = tileHeightMultiplier * 16.0f;
+    const QRectF gameboardGeometry(-gameboardWidth / 2.0f,
+                                   -gameboardHeight / 2.0f,
+                                   gameboardWidth,
+                                   gameboardHeight);
 
-    foreach (MahjongBoardLayoutItem *boardItem, m_boardTiles) {
-        QVector3D position;
-        position.setX(((boardItem->x() * tileWidthMultiplier) + tileWidthMultiplier) + gameboardGeometry.x());
-        position.setY(((boardItem->y() * tileHeightMultiplier) + tileHeightMultiplier) + gameboardGeometry.y());
-        position.setZ((boardItem->d() * tileDepthMultiplier * 2) + tileDepthMultiplier);
+    for (auto boardItem : m_boardTiles) {
+        // Set position of tile to match position in layout structure
+        const QVector3D position(((boardItem->x() * tileWidthMultiplier) + tileWidthMultiplier) + gameboardGeometry.x(),
+                                 ((boardItem->y() * tileHeightMultiplier) + tileHeightMultiplier) + gameboardGeometry.y(),
+                                 (boardItem->d() * tileDepthMultiplier * 2) + tileDepthMultiplier);
         boardItem->tile()->setTranslate(position);
-        //Set visible by setting parent
-        boardItem->tile()->setVisible(true);
     }
 }
 
-bool MahjongBoard::isOnLeft(MahjongBoardLayoutItem *tile1, MahjongBoardLayoutItem *tile2)
+bool MahjongBoard::isOnLeft(MahjongBoardLayoutItem *tile1, MahjongBoardLayoutItem *tile2) const
 {
     return ((tile1->x() - 2 == tile2->x()) &&
             (tile1->y() == tile2->y() || tile1->y() + 1 == tile2->y() || tile1->y() - 1 == tile2->y()) &&
             (tile1->d() == tile2->d()));
 }
 
-bool MahjongBoard::isOnRight(MahjongBoardLayoutItem *tile1, MahjongBoardLayoutItem *tile2)
+bool MahjongBoard::isOnRight(MahjongBoardLayoutItem *tile1, MahjongBoardLayoutItem *tile2) const
 {
     return ((tile1->x() + 2 == tile2->x()) &&
             (tile1->y() == tile2->y() || tile1->y() + 1 == tile2->y() || tile1->y() - 1 == tile2->y()) &&
             (tile1->d() == tile2->d()));
 }
 
-bool MahjongBoard::isOnTop(MahjongBoardLayoutItem *tile1, MahjongBoardLayoutItem *tile2)
+bool MahjongBoard::isOnTop(MahjongBoardLayoutItem *tile1, MahjongBoardLayoutItem *tile2) const
 {
     return ((tile1->d() + 1 == tile2->d()) &&
             ((tile1->x() == tile2->x() && tile1->y() == tile2->y()) ||
@@ -390,19 +416,19 @@ bool MahjongBoard::isOnTop(MahjongBoardLayoutItem *tile1, MahjongBoardLayoutItem
              (tile1->x() + 1 == tile2->x() && tile1->y() + 1 == tile2->y())));
 }
 
-bool MahjongBoard::canRemove(MahjongTileEntity *tile)
+bool MahjongBoard::canRemove(MahjongTile *tile) const
 {
+    // XXX Try and refactor this to not depend on string comparison
+    const QString w1 = tile->faceValue();
+    const QString w2 = m_firstTile->faceValue();
+    const QString w1_name = w1.mid(0, 1);
+    const QString w2_name = w2.mid(0, 1);
+
     bool isRight = false;
     bool isLeft = false;
     bool isTop = false;
     bool isRemoveable = false;
-
-    QString w1 = tile->faceValue();
-    QString w2 = m_firstTile->faceValue();
-    QString w1_name = w1.mid(0, 1);
-    QString w2_name = w2.mid(0, 1);
-
-    foreach (MahjongBoardLayoutItem *boardTile, m_boardTiles) {
+    for (const auto boardTile : m_boardTiles) {
         if (isOnLeft(tile->boardPosition(), boardTile))
             isLeft = true;
         if (isOnRight(tile->boardPosition(), boardTile))
@@ -439,13 +465,13 @@ bool MahjongBoard::canRemove(MahjongTileEntity *tile)
     return isRemoveable;
 }
 
-bool MahjongBoard::canBegin(MahjongBoardLayoutItem *tile)
+bool MahjongBoard::canBegin(MahjongBoardLayoutItem *tile) const
 {
     bool isRight = false;
     bool isLeft = false;
     bool isTop = false;
 
-    foreach (MahjongBoardLayoutItem *boardTile, m_boardTiles) {
+    for (const auto boardTile : m_boardTiles) {
         if (isOnLeft(tile, boardTile))
             isLeft = true;
         if (isOnRight(tile, boardTile))
@@ -459,65 +485,138 @@ bool MahjongBoard::canBegin(MahjongBoardLayoutItem *tile)
 
 int MahjongBoard::countCombinations()
 {
-    m_hints = QString();
-    int combinations = 0;
     QVector<MahjongBoardLayoutItem*> possiblePairsArray;
-
-    foreach (MahjongBoardLayoutItem *tile, m_boardTiles) {
+    for (const auto tile : m_boardTiles) {
         if (canBegin(tile))
             possiblePairsArray.append(tile);
     }
 
+    int combinations = 0;
+    m_hints.clear();
     for (int r = 0; r < possiblePairsArray.count(); r++)
     {
         for (int j = 0; j < r; j++)
         {
             bool compatible = false;
-            MahjongBoardLayoutItem *w1 = possiblePairsArray[j];
-            MahjongBoardLayoutItem *w2 = possiblePairsArray[r];
-            QString w1_name = w1->tile()->faceValue().mid(0,1);
-            QString w2_name = w2->tile()->faceValue().mid(0,1);
-            if (w2_name == "n" || w2_name == "b" || w2_name == "d" || w2_name == "w" || w2_name == "z")
-            {
+            const MahjongBoardLayoutItem *w1 = possiblePairsArray[j];
+            const MahjongBoardLayoutItem *w2 = possiblePairsArray[r];
+            const QString w1_name = w1->tile()->faceValue().mid(0,1);
+            const QString w2_name = w2->tile()->faceValue().mid(0,1);
+            if (w2_name == "n" || w2_name == "b" || w2_name == "d" || w2_name == "w" || w2_name == "z") {
                 if (w1->tile()->faceValue() == w2->tile()->faceValue())
                     compatible = true;
-            }
-            else if (w2_name == "s")
-            {
+            } else if (w2_name == "s") {
                 if (w1_name == "s")
                     compatible = true;
-            }
-            else if (w2_name == "f")
-            {
+            } else if (w2_name == "f") {
                 if (w1_name == "f")
                     compatible = true;
-            }
-            if (compatible)
-            {
+            } if (compatible) {
                 combinations++;
                 m_hints += w2->tile()->faceValue() + " ";
             }
         }
     }
 
-    qDebug() << m_hints;
-
     return combinations;
 }
 
-void MahjongBoard::removeTiles(MahjongTileEntity *tile1, MahjongTileEntity *tile2)
+void MahjongBoard::removeTiles(MahjongTile *tile1, MahjongTile *tile2)
 {
     MahjongBoardLayoutItem *tile1Position = tile1->boardPosition();
     MahjongBoardLayoutItem *tile2Position = tile2->boardPosition();
     m_boardTiles.removeOne(tile1Position);
     m_boardTiles.removeOne(tile2Position);
-    tile1->setBoardPosition(Q_NULLPTR);
-    tile2->setBoardPosition(Q_NULLPTR);
-
-    m_firstTile = Q_NULLPTR;
+    m_tiles.removeOne(tile1);
+    m_tiles.removeOne(tile2);
+    delete tile1;
+    delete tile2;
+    updateTileRenderer();
+    m_firstTile = nullptr;
     m_tilesLeft -= 2;
-    tile1->setSelected(false);
-    tile2->setSelected(false);
-    tile1->setVisible(false);
-    tile2->setVisible(false);
+}
+
+void MahjongBoard::resetTileBufferData()
+{
+    QByteArray byteArray;
+    byteArray.resize(m_tiles.count() * sizeof(TileBufferLayout));
+    TileBufferLayout *data = reinterpret_cast<TileBufferLayout *>(byteArray.data());
+    for (const auto tile : m_tiles) {
+        data->pos = tile->translate();
+        data->isSelected = tile->isSelected();
+        data->face = tile->face();
+        ++data;
+    }
+    m_tileInstanceBuffer->setData(byteArray);
+}
+
+void MahjongBoard::setupTileInstanceAttributes()
+{
+    // (position, selected, face)
+    auto positionAttribute = new Qt3DRender::QAttribute(m_tileMesh);
+    positionAttribute->setName(QStringLiteral("pos"));
+    positionAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+    positionAttribute->setVertexBaseType(Qt3DRender::QAttribute::Float);
+    positionAttribute->setVertexSize(3);
+    positionAttribute->setDivisor(1);
+    positionAttribute->setBuffer(m_tileInstanceBuffer);
+    positionAttribute->setByteOffset(0);
+    positionAttribute->setByteStride(sizeof(TileBufferLayout));
+    m_tileMesh->geometry()->addAttribute(positionAttribute);
+
+    auto selectedAttribute = new Qt3DRender::QAttribute(m_tileMesh);
+    selectedAttribute->setName("isSelected");
+    selectedAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+    selectedAttribute->setVertexBaseType(Qt3DRender::QAttribute::Int);
+    selectedAttribute->setVertexSize(1);
+    selectedAttribute->setDivisor(1);
+    selectedAttribute->setByteOffset(sizeof(QVector3D));
+    selectedAttribute->setByteStride(sizeof(TileBufferLayout));
+    selectedAttribute->setBuffer(m_tileInstanceBuffer);
+    m_tileMesh->geometry()->addAttribute(selectedAttribute);
+
+    auto faceAttribute = new Qt3DRender::QAttribute(m_tileMesh);
+    faceAttribute->setName("faceId");
+    faceAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+    faceAttribute->setVertexBaseType(Qt3DRender::QAttribute::Int);
+    faceAttribute->setVertexSize(1);
+    faceAttribute->setDivisor(1);
+    faceAttribute->setByteOffset(sizeof(QVector3D) + sizeof(int));
+    faceAttribute->setByteStride(sizeof(TileBufferLayout));
+    faceAttribute->setBuffer(m_tileInstanceBuffer);
+    m_tileMesh->geometry()->addAttribute(faceAttribute);
+}
+
+void MahjongBoard::updateTileRenderer()
+{
+    resetTileBufferData();
+    m_tileMesh->setInstanceCount(m_tiles.count());
+}
+
+void MahjongBoard::setupTextures()
+{
+    // base color (array)
+    auto baseColorTexture = new Qt3DRender::QTextureImage;
+    baseColorTexture->setSource(QUrl(QString("qrc:/textures/tiles/MahjongTile_improved_DefaultMaterial_BaseColor.png")));
+    m_material->baseColor()->addTextureImage(baseColorTexture);
+
+    // metalness (array)
+    auto metalnessTexture = new Qt3DRender::QTextureImage;
+    metalnessTexture->setSource(QUrl(QString("qrc:/textures/tiles/MahjongTile_improved_DefaultMaterial_Metallic.png")));
+    m_material->metalness()->addTextureImage(metalnessTexture);
+
+    // roughness (array)
+    auto roughnessTexture = new Qt3DRender::QTextureImage;
+    roughnessTexture->setSource(QUrl(QString("qrc:/textures/tiles/MahjongTile_improved_DefaultMaterial_Roughness.png")));
+    m_material->roughness()->addTextureImage(roughnessTexture);
+
+    // ambient Occulusion
+    auto aoTexture = new Qt3DRender::QTextureImage;
+    aoTexture->setSource(QUrl(QString("qrc:/textures/tiles/MahjongTile_improved_DefaultMaterial_Mixed_AO.png")));
+    m_material->ambientOcclusion()->addTextureImage(aoTexture);
+
+    // normal
+    auto normalTexture = new Qt3DRender::QTextureImage;
+    normalTexture->setSource(QUrl(QString("qrc:/textures/tiles/MahjongTile_improved_DefaultMaterial_Normal.png")));
+    m_material->normal()->addTextureImage(normalTexture);
 }

@@ -11,10 +11,6 @@
 #include <Qt3DRender/QRenderAspect>
 #include <Qt3DExtras/QForwardRenderer>
 #include <Qt3DRender/QRenderSettings>
-#include <Qt3DRender/QTextureImage>
-#include <Qt3DRender/QMesh>
-#include <Qt3DExtras/QDiffuseMapMaterial>
-#include <Qt3DRender/QTextureImage>
 #include <Qt3DRender/QDirectionalLight>
 #include <Qt3DRender/QPickingSettings>
 
@@ -27,7 +23,6 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     : QObject(parent)
     , m_rootEntity(new Qt3DCore::QEntity())
     , m_viewportSize(QSize(800,600))
-    , m_inputSource(nullptr)
 {
     // Scene Camera
     m_camera = new Qt3DRender::QCamera(m_rootEntity);
@@ -36,6 +31,7 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     m_camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
     m_camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
     m_camera->setPosition(QVector3D(0.0f, -15.0f, 25.0f));
+    //m_camera->setPosition(QVector3D(50.0f, -100.0f, 100.0f));
 
     // Forward Renderer
     Qt3DRender::QRenderSettings *renderSettingsComponent = new Qt3DRender::QRenderSettings(m_rootEntity);
@@ -50,6 +46,7 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     m_inputSettings = new Qt3DInput::QInputSettings(m_rootEntity);
     m_rootEntity->addComponent(m_inputSettings);
 
+    // Setup Scene
     TableEntity *tableSurface = new TableEntity(m_rootEntity);
     tableSurface->setX(0.0f);
     tableSurface->setY(0.0f);
@@ -65,11 +62,6 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     directionLightEntity->addComponent(directionalLight);
     directionalLight->setWorldDirection(QVector3D(0.1f, 0.5f, -0.5f));
     directionalLight->setIntensity(1);
-}
-
-MahjongGameScene::~MahjongGameScene()
-{
-
 }
 
 Qt3DCore::QEntity *MahjongGameScene::rootEntity() const
@@ -98,7 +90,7 @@ void MahjongGameScene::setViewportSize(QSize viewportSize)
         return;
 
     m_viewportSize = viewportSize;
-    if (m_camera != Q_NULLPTR)
+    if (m_camera != nullptr)
         m_camera->setAspectRatio(static_cast<float>(m_viewportSize.width()) / static_cast<float>(m_viewportSize.height()));
     emit viewportSizeChanged(viewportSize);
 }
@@ -106,11 +98,6 @@ void MahjongGameScene::setViewportSize(QSize viewportSize)
 void MahjongGameScene::newGame()
 {
     m_mahjongBoard->newGame();
-}
-
-void MahjongGameScene::processInput(int x, int y)
-{
-    qDebug() << "Input event at(" << x << "," << y << ")";
 }
 
 void MahjongGameScene::setInputSource(QQuickWindow *inputSource)

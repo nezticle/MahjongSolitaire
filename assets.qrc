@@ -49,5 +49,15 @@
         <file>models/MahjongTile.obj</file>
         <file>models/MahjongTileface.obj</file>
         <file>models/XYPlane.obj</file>
+        <file>shaders/mahjongtile.frag</file>
+        <file>shaders/mahjongtile.vert</file>
+        <file>models/MahjongTile_colider.obj</file>
+        <file>models/MahjongTile_improved.obj</file>
+        <file>textures/tiles/MahjongTile_improved_DefaultMaterial_BaseColor.png</file>
+        <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Height.png</file>
+        <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Metallic.png</file>
+        <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Normal.png</file>
+        <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Roughness.png</file>
+        <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Mixed_AO.png</file>
     </qresource>
 </RCC>

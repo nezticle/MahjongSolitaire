@@ -4,10 +4,11 @@ SOURCES += \
     main.cpp \
     mahjonggamescene.cpp \
     tableentity.cpp \
-    mahjongtileentity.cpp \
     mahjongboardlayoutitem.cpp \
     mahjongboard.cpp \
-    mahjongsharedresources.cpp
+    mahjongsharedresources.cpp \
+    mahjongtile.cpp \
+    mahjongtilematerial.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -16,7 +17,8 @@ RESOURCES += \
 HEADERS += \
     mahjonggamescene.h \
     tableentity.h \
-    mahjongtileentity.h \
     mahjongboardlayoutitem.h \
     mahjongboard.h \
-    mahjongsharedresources.h
+    mahjongsharedresources.h \
+    mahjongtile.h \
+    mahjongtilematerial.h

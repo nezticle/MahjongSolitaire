@@ -4,6 +4,10 @@
 #include <QtCore/QObject>
 #include <QtCore/QMap>
 
+namespace Qt3DCore {
+    class QEntity;
+}
+
 namespace Qt3DRender {
     class QMaterial;
     class QMesh;
@@ -14,27 +18,23 @@ class MahjongSharedResources
 {
 public:
     static MahjongSharedResources &instance();
-
-    Qt3DRender::QMaterial *materialForTileface(const QString &tileface);
-    Qt3DRender::QMaterial *tileMaterial();
-    Qt3DRender::QMaterial *tileSelectedMaterial();
-    Qt3DRender::QMesh *tileMesh();
-    Qt3DRender::QMesh *tilefaceMesh();
-
+    Qt3DRender::QMesh *tileColliderMesh(Qt3DCore::QEntity *parent);
+    Qt3DRender::QMaterial *debugMaterial(Qt3DCore::QEntity *parent);
 private:
     MahjongSharedResources();
+    ~MahjongSharedResources();
     MahjongSharedResources(MahjongSharedResources const&);
     void operator =(MahjongSharedResources const&);
 
     void initSharedResources();
-    Qt3DRender::QMaterial *generateMaterial(const QString &textureName);
 
-    QMap<QString,Qt3DRender::QMaterial*> m_tileFaceMaterials;
-    Qt3DRender::QMaterial *m_tileMaterial;
-    Qt3DRender::QMaterial *m_tileSelectedMaterial;
-    Qt3DRender::QMesh *m_tileMesh;
-    Qt3DRender::QMesh *m_tilefaceMesh;
+private:
+    Qt3DCore::QEntity *m_dummyParent = nullptr;
+    Qt3DRender::QMesh *m_tileColliderMesh = nullptr;
+    Qt3DRender::QMaterial *m_debugMaterial = nullptr;
 
 };
+
+
 
 #endif // MAHJONGSHAREDRESOURCES_H

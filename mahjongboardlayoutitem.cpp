@@ -1,6 +1,6 @@
 #include "mahjongboardlayoutitem.h"
 
-#include "mahjongtileentity.h"
+#include "mahjongtile.h"
 
 MahjongBoardLayoutItem::MahjongBoardLayoutItem(int xValue, int yValue, int dValue)
     : m_x(xValue)
@@ -11,7 +11,7 @@ MahjongBoardLayoutItem::MahjongBoardLayoutItem(int xValue, int yValue, int dValu
 
 }
 
-void MahjongBoardLayoutItem::setTile(MahjongTileEntity *tile)
+void MahjongBoardLayoutItem::setTile(MahjongTile *tile)
 {
     m_tile = tile;
 }
