@@ -7,6 +7,7 @@
 #include <Qt3DRender/QBuffer>
 #include <Qt3DRender/QMesh>
 #include <Qt3DRender/QAttribute>
+#include <Qt3DRender/QTexture>
 #include <Qt3DRender/QTextureImage>
 
 #include <QtCore/QTime>
@@ -28,7 +29,7 @@ MahjongBoard::MahjongBoard(Qt3DCore::QNode *parent)
 
     // Setup Geometry Renderer for Tile
     m_tileMesh = new Qt3DRender::QMesh(this);
-    m_tileMesh->setSource(QUrl("qrc:/models/MahjongTile_improved.obj"));
+    m_tileMesh->setSource(QUrl("qrc:/models/MahjongTile_improved2.obj"));
     m_tileMesh->setInstanceCount(m_tiles.count());
     connect(m_tileMesh, &Qt3DRender::QGeometryRenderer::geometryChanged, [=] () {
         // Setup Attributes for Tile instances (position, selected, face)
@@ -595,28 +596,58 @@ void MahjongBoard::updateTileRenderer()
 
 void MahjongBoard::setupTextures()
 {
+    Qt3DRender::QTextureWrapMode wrapMode;
+    wrapMode.setX(Qt3DRender::QTextureWrapMode::ClampToEdge);
+    wrapMode.setY(Qt3DRender::QTextureWrapMode::ClampToEdge);
+
     // base color (array)
-    auto baseColorTexture = new Qt3DRender::QTextureImage;
+    auto baseColorTexture = new Qt3DRender::QTextureLoader;
+    baseColorTexture->setFormat(Qt3DRender::QAbstractTexture::SRGB8_Alpha8);
     baseColorTexture->setSource(QUrl(QString("qrc:/textures/tiles/MahjongTile_improved_DefaultMaterial_BaseColor.png")));
-    m_material->baseColor()->addTextureImage(baseColorTexture);
+    baseColorTexture->setGenerateMipMaps(true);
+    baseColorTexture->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
+    baseColorTexture->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
+    baseColorTexture->setWrapMode(wrapMode);
+    baseColorTexture->setMaximumAnisotropy(16.0f);
+    m_material->setBaseColor(baseColorTexture);
 
     // metalness (array)
-    auto metalnessTexture = new Qt3DRender::QTextureImage;
+    auto metalnessTexture = new Qt3DRender::QTextureLoader;
     metalnessTexture->setSource(QUrl(QString("qrc:/textures/tiles/MahjongTile_improved_DefaultMaterial_Metallic.png")));
-    m_material->metalness()->addTextureImage(metalnessTexture);
+    metalnessTexture->setGenerateMipMaps(true);
+    metalnessTexture->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
+    metalnessTexture->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
+    metalnessTexture->setWrapMode(wrapMode);
+    metalnessTexture->setMaximumAnisotropy(16.0f);
+    m_material->setMetalness(metalnessTexture);
 
     // roughness (array)
-    auto roughnessTexture = new Qt3DRender::QTextureImage;
+    auto roughnessTexture = new Qt3DRender::QTextureLoader;
     roughnessTexture->setSource(QUrl(QString("qrc:/textures/tiles/MahjongTile_improved_DefaultMaterial_Roughness.png")));
-    m_material->roughness()->addTextureImage(roughnessTexture);
+    roughnessTexture->setGenerateMipMaps(true);
+    roughnessTexture->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
+    roughnessTexture->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
+    roughnessTexture->setWrapMode(wrapMode);
+    roughnessTexture->setMaximumAnisotropy(16.0f);
+    m_material->setRoughness(roughnessTexture);
 
     // ambient Occulusion
-    auto aoTexture = new Qt3DRender::QTextureImage;
+    auto aoTexture = new Qt3DRender::QTextureLoader;
     aoTexture->setSource(QUrl(QString("qrc:/textures/tiles/MahjongTile_improved_DefaultMaterial_Mixed_AO.png")));
-    m_material->ambientOcclusion()->addTextureImage(aoTexture);
+    aoTexture->setGenerateMipMaps(true);
+    aoTexture->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
+    aoTexture->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
+    aoTexture->setWrapMode(wrapMode);
+    aoTexture->setMaximumAnisotropy(16.0f);
+    m_material->setAmbientOcclusion(aoTexture);
 
     // normal
-    auto normalTexture = new Qt3DRender::QTextureImage;
+    auto normalTexture = new Qt3DRender::QTextureLoader;
     normalTexture->setSource(QUrl(QString("qrc:/textures/tiles/MahjongTile_improved_DefaultMaterial_Normal.png")));
-    m_material->normal()->addTextureImage(normalTexture);
+    normalTexture->setGenerateMipMaps(true);
+    normalTexture->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
+    normalTexture->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
+    normalTexture->setWrapMode(wrapMode);
+    normalTexture->setMaximumAnisotropy(16.0f);
+    m_material->setNormal(normalTexture);
 }

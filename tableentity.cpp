@@ -15,7 +15,7 @@ TableEntity::TableEntity(Qt3DCore::QNode *parent)
     mesh->setWidth(1.0f);
     mesh->setMeshResolution(QSize(2, 2));
 
-    addComponent(mesh);
+    //addComponent(mesh);
 
     // Material
     Qt3DExtras::QPhongMaterial *phongMaterial = new Qt3DExtras::QPhongMaterial(this);

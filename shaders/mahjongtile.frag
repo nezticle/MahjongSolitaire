@@ -52,7 +52,7 @@ struct EnvironmentLight {
     samplerCube specular; // For specular contribution
 };
 uniform EnvironmentLight envLight;
-uniform int envLightCount = 0;
+uniform int envLightCount = 1;
 
 int mipLevelCount(const in samplerCube cube)
 {

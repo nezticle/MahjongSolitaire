@@ -59,5 +59,8 @@
         <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Normal.png</file>
         <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Roughness.png</file>
         <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Mixed_AO.png</file>
+        <file>textures/environment/memphis_cube_irradiance.dds</file>
+        <file>textures/environment/memphis_cube_specular.dds</file>
+        <file>models/MahjongTile_improved2.obj</file>
     </qresource>
 </RCC>
