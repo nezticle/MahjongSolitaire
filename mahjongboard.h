@@ -30,8 +30,10 @@ public:
     QVector3D translate() const;
     float scale() const;
 
+    int gameSeed() const;
+
 public slots:
-    void newGame();
+    void newGame(int seed = 0);
 
     void setTranslate(QVector3D translate);
     void setScale(float scale);

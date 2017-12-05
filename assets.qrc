@@ -62,5 +62,7 @@
         <file>textures/environment/memphis_cube_irradiance.dds</file>
         <file>textures/environment/memphis_cube_specular.dds</file>
         <file>models/MahjongTile_improved2.obj</file>
+        <file>textures/environment/memphis_skyline_cube_irradiance.dds</file>
+        <file>textures/environment/memphis_skyline_cube_specular.dds</file>
     </qresource>
 </RCC>

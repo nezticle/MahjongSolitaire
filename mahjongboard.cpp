@@ -57,9 +57,17 @@ float MahjongBoard::scale() const
     return m_transform->scale();
 }
 
-void MahjongBoard::newGame()
+int MahjongBoard::gameSeed() const
 {
-    m_gameSeed = QTime::currentTime().msecsSinceStartOfDay();
+    return m_gameSeed;
+}
+
+void MahjongBoard::newGame(int seed)
+{
+    if (seed == 0)
+        m_gameSeed = QTime::currentTime().msecsSinceStartOfDay();
+    else
+        m_gameSeed = seed;
     initGame();
 }
 
@@ -599,6 +607,7 @@ void MahjongBoard::setupTextures()
     Qt3DRender::QTextureWrapMode wrapMode;
     wrapMode.setX(Qt3DRender::QTextureWrapMode::ClampToEdge);
     wrapMode.setY(Qt3DRender::QTextureWrapMode::ClampToEdge);
+    wrapMode.setZ(Qt3DRender::QTextureWrapMode::ClampToEdge);
 
     // base color (array)
     auto baseColorTexture = new Qt3DRender::QTextureLoader;

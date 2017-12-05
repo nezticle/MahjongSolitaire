@@ -14,7 +14,7 @@
 #include <Qt3DRender/QDirectionalLight>
 #include <Qt3DRender/QEnvironmentLight>
 #include <Qt3DExtras/QSkyboxEntity>
-#include <Qt3DExtras/QOrbitCameraController>
+//#include <Qt3DExtras/QOrbitCameraController>
 #include <Qt3DRender/QPickingSettings>
 #include <Qt3DRender/QTexture>
 #include <Qt3DRender/QTextureImage>
@@ -33,17 +33,18 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     m_camera = new Qt3DRender::QCamera(m_rootEntity);
     m_camera->setProjectionType(Qt3DRender::QCameraLens::PerspectiveProjection);
     m_camera->setAspectRatio(static_cast<float>(m_viewportSize.width()) / static_cast<float>(m_viewportSize.height()));
+    m_camera->setFieldOfView(45);
     m_camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
     m_camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
     m_camera->setPosition(QVector3D(0.0f, -15.0f, 25.0f));
-    m_camera->setExposure(3.0f);
+    m_camera->setExposure(1.0f);
     //m_camera->setPosition(QVector3D(50.0f, -100.0f, 100.0f));
 
-    // XXX Orbit Debug Camera
-    auto orbitCamera = new Qt3DExtras::QOrbitCameraController(m_rootEntity);
-    orbitCamera->setCamera(m_camera);
-    orbitCamera->setLinearSpeed(10);
-    orbitCamera->setLookSpeed(240);
+//    // XXX Orbit Debug Camera
+//    auto orbitCamera = new Qt3DExtras::QOrbitCameraController(m_rootEntity);
+//    orbitCamera->setCamera(m_camera);
+//    orbitCamera->setLinearSpeed(10);
+//    orbitCamera->setLookSpeed(240);
 
     // Forward Renderer
     Qt3DRender::QRenderSettings *renderSettingsComponent = new Qt3DRender::QRenderSettings(m_rootEntity);
@@ -81,13 +82,13 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     wrapMode.setY(Qt3DRender::QTextureWrapMode::ClampToEdge);
 
     auto irradianceCubeMap = new Qt3DRender::QTextureLoader(m_rootEntity);
-    irradianceCubeMap->setSource(QUrl("qrc:/textures/environment/memphis_cube_irradiance.dds"));
+    irradianceCubeMap->setSource(QUrl("qrc:/textures/environment/memphis_skyline_cube_irradiance.dds"));
     irradianceCubeMap->setGenerateMipMaps(false);
     irradianceCubeMap->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
     irradianceCubeMap->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
     irradianceCubeMap->setWrapMode(wrapMode);
     auto specularCubeMap = new Qt3DRender::QTextureLoader(m_rootEntity);
-    specularCubeMap->setSource(QUrl("qrc:/textures/environment/memphis_cube_specular.dds"));
+    specularCubeMap->setSource(QUrl("qrc:/textures/environment/memphis_skyline_cube_specular.dds"));
     specularCubeMap->setGenerateMipMaps(false);
     specularCubeMap->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
     specularCubeMap->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
@@ -95,7 +96,7 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
 
     // Setup Skybox
     auto skybox = new Qt3DExtras::QSkyboxEntity(m_rootEntity);
-    skybox->setBaseName("qrc:/textures/environment/memphis_cube_irradiance");
+    skybox->setBaseName("qrc:/textures/environment/memphis_skyline_cube_irradiance");
     skybox->setExtension(".dds");
 
     // Setup Environment Map
@@ -126,6 +127,11 @@ QQuickWindow *MahjongGameScene::inputSource() const
     return m_inputSource;
 }
 
+int MahjongGameScene::seed() const
+{
+    return m_seed;
+}
+
 void MahjongGameScene::setViewportSize(QSize viewportSize)
 {
     if (m_viewportSize == viewportSize)
@@ -140,6 +146,8 @@ void MahjongGameScene::setViewportSize(QSize viewportSize)
 void MahjongGameScene::newGame()
 {
     m_mahjongBoard->newGame();
+    // Update current gameseed
+    setSeed(m_mahjongBoard->gameSeed());
 }
 
 void MahjongGameScene::setInputSource(QQuickWindow *inputSource)
@@ -152,3 +160,17 @@ void MahjongGameScene::setInputSource(QQuickWindow *inputSource)
     m_inputSettings->setEventSource(inputSource);
 }
 
+void MahjongGameScene::setSeed(int seed)
+{
+    if (m_seed == seed)
+        return;
+
+    m_seed = seed;
+    emit seedChanged(m_seed);
+}
+
+
+void MahjongGameScene::reset()
+{
+    m_mahjongBoard->newGame(m_seed);
+}
