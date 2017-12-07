@@ -13,16 +13,12 @@
 MahjongTileMaterial::MahjongTileMaterial(Qt3DCore::QNode *parent)
     : QMaterial(parent)
     , m_baseColorTexture(new Qt3DRender::QTexture2DArray())
-    , m_metalnessTexture(new Qt3DRender::QTexture2DArray())
-    , m_roughnessTexture(new Qt3DRender::QTexture2DArray())
-    , m_ambientOcclusionTexture(new Qt3DRender::QTexture2D())
+    , m_roughMetalHeightAo(new Qt3DRender::QTexture2D())
     , m_normalTexture(new Qt3DRender::QTexture2D())
     , m_environmentIrradianceTexture(new Qt3DRender::QTexture2D())
     , m_environmentSpecularTexture(new Qt3DRender::QTexture2D())
     , m_baseColorParameter(new Qt3DRender::QParameter(QStringLiteral("baseColorMap"), m_baseColorTexture))
-    , m_metalnessParameter(new Qt3DRender::QParameter(QStringLiteral("metalnessMap"), m_metalnessTexture))
-    , m_roughnessParameter(new Qt3DRender::QParameter(QStringLiteral("roughnessMap"), m_roughnessTexture))
-    , m_ambientOcclusionParameter(new Qt3DRender::QParameter(QStringLiteral("ambientOcclusionMap"), m_ambientOcclusionTexture))
+    , m_roughMetalHeightAoParameter(new Qt3DRender::QParameter(QStringLiteral("roughMetalHeightAoMap"), m_roughMetalHeightAo))
     , m_normalParameter(new Qt3DRender::QParameter(QStringLiteral("normalMap"), m_normalTexture))
     , m_environmentIrradianceParameter(new Qt3DRender::QParameter(QStringLiteral("envLight.irradiance"), m_environmentIrradianceTexture))
     , m_environmentSpecularParameter(new Qt3DRender::QParameter(QStringLiteral("envLight.specular"), m_environmentSpecularTexture))
@@ -38,23 +34,11 @@ MahjongTileMaterial::MahjongTileMaterial(Qt3DCore::QNode *parent)
     m_baseColorTexture->setGenerateMipMaps(true);
     m_baseColorTexture->setMaximumAnisotropy(16.0f);
 
-    m_metalnessTexture->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
-    m_metalnessTexture->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
-    m_metalnessTexture->setWrapMode(Qt3DRender::QTextureWrapMode(Qt3DRender::QTextureWrapMode::Repeat));
-    m_metalnessTexture->setGenerateMipMaps(true);
-    m_metalnessTexture->setMaximumAnisotropy(16.0f);
-
-    m_roughnessTexture->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
-    m_roughnessTexture->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
-    m_roughnessTexture->setWrapMode(Qt3DRender::QTextureWrapMode(Qt3DRender::QTextureWrapMode::Repeat));
-    m_roughnessTexture->setGenerateMipMaps(true);
-    m_roughnessTexture->setMaximumAnisotropy(16.0f);
-
-    m_ambientOcclusionTexture->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
-    m_ambientOcclusionTexture->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
-    m_ambientOcclusionTexture->setWrapMode(Qt3DRender::QTextureWrapMode(Qt3DRender::QTextureWrapMode::Repeat));
-    m_ambientOcclusionTexture->setGenerateMipMaps(true);
-    m_ambientOcclusionTexture->setMaximumAnisotropy(16.0f);
+    m_roughMetalHeightAo->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
+    m_roughMetalHeightAo->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
+    m_roughMetalHeightAo->setWrapMode(Qt3DRender::QTextureWrapMode(Qt3DRender::QTextureWrapMode::Repeat));
+    m_roughMetalHeightAo->setGenerateMipMaps(true);
+    m_roughMetalHeightAo->setMaximumAnisotropy(16.0f);
 
     m_normalTexture->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
     m_normalTexture->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
@@ -77,14 +61,8 @@ MahjongTileMaterial::MahjongTileMaterial(Qt3DCore::QNode *parent)
     connect(m_baseColorParameter, &Qt3DRender::QParameter::valueChanged, [=] (const QVariant &var) {
         emit baseColorChanged(var.value<Qt3DRender::QAbstractTexture *>());
     });
-    connect(m_metalnessParameter, &Qt3DRender::QParameter::valueChanged, [=] (const QVariant &var) {
-        emit metalnessChanged(var.value<Qt3DRender::QAbstractTexture *>());
-    });
-    connect(m_roughnessParameter, &Qt3DRender::QParameter::valueChanged, [=] (const QVariant &var) {
-        emit roughnessChanged(var.value<Qt3DRender::QAbstractTexture *>());
-    });
-    connect(m_ambientOcclusionParameter, &Qt3DRender::QParameter::valueChanged, [=] (const QVariant &var) {
-        emit ambientOcclusionChanged(var.value<Qt3DRender::QAbstractTexture *>());
+    connect(m_roughMetalHeightAoParameter, &Qt3DRender::QParameter::valueChanged, [=] (const QVariant &var) {
+        emit roughMetalHeightAoChanged(var.value<Qt3DRender::QAbstractTexture *>());
     });
     connect(m_normalParameter, &Qt3DRender::QParameter::valueChanged, [=] (const QVariant &var) {
         emit normalChanged(var.value<Qt3DRender::QAbstractTexture *>());
@@ -108,9 +86,7 @@ MahjongTileMaterial::MahjongTileMaterial(Qt3DCore::QNode *parent)
     m_metalRoughEffect->addTechnique(m_metalRoughGL3Technique);
 
     m_metalRoughEffect->addParameter(m_baseColorParameter);
-    m_metalRoughEffect->addParameter(m_metalnessParameter);
-    m_metalRoughEffect->addParameter(m_roughnessParameter);
-    m_metalRoughEffect->addParameter(m_ambientOcclusionParameter);
+    m_metalRoughEffect->addParameter(m_roughMetalHeightAoParameter);
     m_metalRoughEffect->addParameter(m_normalParameter);
     m_metalRoughEffect->addParameter(m_environmentIrradianceParameter);
     m_metalRoughEffect->addParameter(m_environmentSpecularParameter);
@@ -123,24 +99,14 @@ Qt3DRender::QAbstractTexture *MahjongTileMaterial::baseColor() const
     return m_baseColorParameter->value().value<Qt3DRender::QAbstractTexture *>();
 }
 
-Qt3DRender::QAbstractTexture *MahjongTileMaterial::metalness() const
-{
-    return m_metalnessParameter->value().value<Qt3DRender::QAbstractTexture *>();
-}
-
-Qt3DRender::QAbstractTexture *MahjongTileMaterial::roughness() const
-{
-    return m_roughnessParameter->value().value<Qt3DRender::QAbstractTexture *>();
-}
-
-Qt3DRender::QAbstractTexture *MahjongTileMaterial::ambientOcclusion() const
-{
-    return m_ambientOcclusionParameter->value().value<Qt3DRender::QAbstractTexture *>();
-}
-
 Qt3DRender::QAbstractTexture *MahjongTileMaterial::normal() const
 {
     return m_normalParameter->value().value<Qt3DRender::QAbstractTexture *>();
+}
+
+Qt3DRender::QAbstractTexture *MahjongTileMaterial::roughMetalHeightAo() const
+{
+    return m_roughMetalHeightAoParameter->value().value<Qt3DRender::QAbstractTexture *>();
 }
 
 void MahjongTileMaterial::setBaseColor(Qt3DRender::QAbstractTexture *baseColor)
@@ -148,22 +114,12 @@ void MahjongTileMaterial::setBaseColor(Qt3DRender::QAbstractTexture *baseColor)
     m_baseColorParameter->setValue(QVariant::fromValue(baseColor));
 }
 
-void MahjongTileMaterial::setMetalness(Qt3DRender::QAbstractTexture *metalness)
-{
-    m_metalnessParameter->setValue(QVariant::fromValue(metalness));
-}
-
-void MahjongTileMaterial::setRoughness(Qt3DRender::QAbstractTexture *roughness)
-{
-    m_roughnessParameter->setValue(QVariant::fromValue(roughness));
-}
-
-void MahjongTileMaterial::setAmbientOcclusion(Qt3DRender::QAbstractTexture *ambientOcclusion)
-{
-    m_ambientOcclusionParameter->setValue(QVariant::fromValue(ambientOcclusion));
-}
-
 void MahjongTileMaterial::setNormal(Qt3DRender::QAbstractTexture *normal)
 {
     m_normalParameter->setValue(QVariant::fromValue(normal));
+}
+
+void MahjongTileMaterial::setRoughMetalHeightAo(Qt3DRender::QAbstractTexture *metalRoughHeightAo)
+{
+    m_roughMetalHeightAoParameter->setValue(QVariant::fromValue(metalRoughHeightAo));
 }

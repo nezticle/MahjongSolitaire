@@ -15,10 +15,8 @@ uniform float time; // Time in seconds
 
 // PBR Material maps
 uniform sampler2DArray baseColorMap;
-uniform sampler2DArray metalnessMap;
-uniform sampler2DArray roughnessMap;
+uniform sampler2D roughMetalHeightAoMap;
 uniform sampler2D normalMap;
-uniform sampler2D ambientOcclusionMap;
 
 // User control parameters
 uniform float metalFactor = 1.0;
@@ -330,9 +328,10 @@ void main()
 
     // Sample the inputs needed for the metal-roughness PBR BRDF
     vec3 baseColor = texture(baseColorMap, vec3(texCoord, 0)).rgb;
-    float metalness = texture(metalnessMap, vec3(texCoord, 0)).r * metalFactor;
-    float roughness = texture(roughnessMap, vec3(texCoord, 0)).r;
-    float ambientOcclusion = texture(ambientOcclusionMap, texCoord).r;
+    float roughness = texture(roughMetalHeightAoMap, texCoord).r;
+    float metalness = texture(roughMetalHeightAoMap, texCoord).g * metalFactor;
+    float height = texture(roughMetalHeightAoMap, texCoord).b;
+    float ambientOcclusion = texture(roughMetalHeightAoMap, texCoord).a;
     vec3 tNormal = 2.0 * texture(normalMap, texCoord).rgb - vec3(1.0);
     vec3 wNormal = normalize(transpose(worldToTangentMatrix) * tNormal);
 

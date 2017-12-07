@@ -38,13 +38,6 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     m_camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
     m_camera->setPosition(QVector3D(0.0f, -15.0f, 25.0f));
     m_camera->setExposure(1.0f);
-    //m_camera->setPosition(QVector3D(50.0f, -100.0f, 100.0f));
-
-//    // XXX Orbit Debug Camera
-//    auto orbitCamera = new Qt3DExtras::QOrbitCameraController(m_rootEntity);
-//    orbitCamera->setCamera(m_camera);
-//    orbitCamera->setLinearSpeed(10);
-//    orbitCamera->setLookSpeed(240);
 
     // Forward Renderer
     Qt3DRender::QRenderSettings *renderSettingsComponent = new Qt3DRender::QRenderSettings(m_rootEntity);
@@ -70,11 +63,11 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     m_mahjongBoard->setScale(0.9f);
 
     // Scene Lighting
-    auto *directionLightEntity = new Qt3DCore::QEntity(m_rootEntity);
-    auto *directionalLight = new Qt3DRender::QDirectionalLight;
-    directionLightEntity->addComponent(directionalLight);
-    directionalLight->setWorldDirection(QVector3D(0.1f, 0.5f, -0.5f));
-    directionalLight->setIntensity(1);
+//    auto *directionLightEntity = new Qt3DCore::QEntity(m_rootEntity);
+//    auto *directionalLight = new Qt3DRender::QDirectionalLight;
+//    directionLightEntity->addComponent(directionalLight);
+//    directionalLight->setWorldDirection(QVector3D(0.1f, 0.5f, -0.5f));
+//    directionalLight->setIntensity(1);
 
 
     Qt3DRender::QTextureWrapMode wrapMode;
@@ -82,13 +75,13 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
     wrapMode.setY(Qt3DRender::QTextureWrapMode::ClampToEdge);
 
     auto irradianceCubeMap = new Qt3DRender::QTextureLoader(m_rootEntity);
-    irradianceCubeMap->setSource(QUrl("qrc:/textures/environment/memphis_skyline_cube_irradiance.dds"));
+    irradianceCubeMap->setSource(QUrl("qrc:/textures/environment/ClearSky_cube_irradiance.dds"));
     irradianceCubeMap->setGenerateMipMaps(false);
     irradianceCubeMap->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
     irradianceCubeMap->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
     irradianceCubeMap->setWrapMode(wrapMode);
     auto specularCubeMap = new Qt3DRender::QTextureLoader(m_rootEntity);
-    specularCubeMap->setSource(QUrl("qrc:/textures/environment/memphis_skyline_cube_specular.dds"));
+    specularCubeMap->setSource(QUrl("qrc:/textures/environment/ClearSky_cube_specular.dds"));
     specularCubeMap->setGenerateMipMaps(false);
     specularCubeMap->setMinificationFilter(Qt3DRender::QAbstractTexture::LinearMipMapLinear);
     specularCubeMap->setMagnificationFilter(Qt3DRender::QAbstractTexture::Linear);
@@ -96,7 +89,7 @@ MahjongGameScene::MahjongGameScene(QObject *parent)
 
     // Setup Skybox
     auto skybox = new Qt3DExtras::QSkyboxEntity(m_rootEntity);
-    skybox->setBaseName("qrc:/textures/environment/memphis_skyline_cube_irradiance");
+    skybox->setBaseName("qrc:/textures/environment/ClearSky_cube_radiance");
     skybox->setExtension(".dds");
 
     // Setup Environment Map

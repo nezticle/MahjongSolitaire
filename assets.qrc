@@ -1,68 +1,14 @@
 <RCC>
     <qresource prefix="/">
-        <file>textures/bamboo1.png</file>
-        <file>textures/bamboo2.png</file>
-        <file>textures/bamboo3.png</file>
-        <file>textures/bamboo4.png</file>
-        <file>textures/bamboo5.png</file>
-        <file>textures/bamboo6.png</file>
-        <file>textures/bamboo7.png</file>
-        <file>textures/bamboo8.png</file>
-        <file>textures/bamboo9.png</file>
-        <file>textures/character1.png</file>
-        <file>textures/character2.png</file>
-        <file>textures/character3.png</file>
-        <file>textures/character4.png</file>
-        <file>textures/character5.png</file>
-        <file>textures/character6.png</file>
-        <file>textures/character7.png</file>
-        <file>textures/character8.png</file>
-        <file>textures/character9.png</file>
-        <file>textures/coin1.png</file>
-        <file>textures/coin2.png</file>
-        <file>textures/coin3.png</file>
-        <file>textures/coin4.png</file>
-        <file>textures/coin5.png</file>
-        <file>textures/coin6.png</file>
-        <file>textures/coin7.png</file>
-        <file>textures/coin8.png</file>
-        <file>textures/coin9.png</file>
-        <file>textures/dragon1.png</file>
-        <file>textures/dragon2.png</file>
-        <file>textures/dragon3.png</file>
-        <file>textures/flower1.png</file>
-        <file>textures/flower2.png</file>
-        <file>textures/flower3.png</file>
-        <file>textures/flower4.png</file>
-        <file>textures/season1.png</file>
-        <file>textures/season2.png</file>
-        <file>textures/season3.png</file>
-        <file>textures/season4.png</file>
-        <file>textures/Tile_diffuse.png</file>
-        <file>textures/TileSelected_diffuse.png</file>
-        <file>textures/wicker_diffuse.png</file>
-        <file>textures/wicker_specular.png</file>
-        <file>textures/wind1.png</file>
-        <file>textures/wind2.png</file>
-        <file>textures/wind3.png</file>
-        <file>textures/wind4.png</file>
-        <file>models/MahjongTile.obj</file>
-        <file>models/MahjongTileface.obj</file>
-        <file>models/XYPlane.obj</file>
         <file>shaders/mahjongtile.frag</file>
         <file>shaders/mahjongtile.vert</file>
         <file>models/MahjongTile_colider.obj</file>
-        <file>models/MahjongTile_improved.obj</file>
-        <file>textures/tiles/MahjongTile_improved_DefaultMaterial_BaseColor.png</file>
-        <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Height.png</file>
-        <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Metallic.png</file>
-        <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Normal.png</file>
-        <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Roughness.png</file>
-        <file>textures/tiles/MahjongTile_improved_DefaultMaterial_Mixed_AO.png</file>
-        <file>textures/environment/memphis_cube_irradiance.dds</file>
-        <file>textures/environment/memphis_cube_specular.dds</file>
-        <file>models/MahjongTile_improved2.obj</file>
-        <file>textures/environment/memphis_skyline_cube_irradiance.dds</file>
-        <file>textures/environment/memphis_skyline_cube_specular.dds</file>
+        <file>models/MahjongTile_improved3.obj</file>
+        <file>textures/tiles/MahjongTile_improved2_low_Low_Tile_Mat_BaseColor.png</file>
+        <file>textures/tiles/MahjongTile_improved2_low_Low_Tile_Mat_Normal.png</file>
+        <file>textures/tiles/MahjongTile_improved2_low_Low_Tile_Mat_Rough_Metal_Height_AO.png</file>
+        <file>textures/environment/ClearSky_cube_irradiance.dds</file>
+        <file>textures/environment/ClearSky_cube_radiance.dds</file>
+        <file>textures/environment/ClearSky_cube_specular.dds</file>
     </qresource>
 </RCC>
