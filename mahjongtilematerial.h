@@ -39,7 +39,7 @@ signals:
     void roughMetalHeightAoChanged(Qt3DRender::QAbstractTexture * roughMetalHeightAo);
 
 private:
-    Qt3DRender::QTexture2DArray *m_baseColorTexture;
+    Qt3DRender::QTexture2D *m_baseColorTexture;
     Qt3DRender::QTexture2D *m_roughMetalHeightAo;
     Qt3DRender::QTexture2D *m_normalTexture;
     Qt3DRender::QTexture2D *m_environmentIrradianceTexture;

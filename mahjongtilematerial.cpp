@@ -12,7 +12,7 @@
 
 MahjongTileMaterial::MahjongTileMaterial(Qt3DCore::QNode *parent)
     : QMaterial(parent)
-    , m_baseColorTexture(new Qt3DRender::QTexture2DArray())
+    , m_baseColorTexture(new Qt3DRender::QTexture2D())
     , m_roughMetalHeightAo(new Qt3DRender::QTexture2D())
     , m_normalTexture(new Qt3DRender::QTexture2D())
     , m_environmentIrradianceTexture(new Qt3DRender::QTexture2D())

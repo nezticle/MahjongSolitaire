@@ -14,7 +14,7 @@ uniform vec3 eyePosition; // World space eye position
 uniform float time; // Time in seconds
 
 // PBR Material maps
-uniform sampler2DArray baseColorMap;
+uniform sampler2D baseColorMap;
 uniform sampler2D roughMetalHeightAoMap;
 uniform sampler2D normalMap;
 
@@ -327,7 +327,7 @@ void main()
     vec3 tView = worldToTangentMatrix * wView;
 
     // Sample the inputs needed for the metal-roughness PBR BRDF
-    vec3 baseColor = texture(baseColorMap, vec3(texCoord, 0)).rgb;
+    vec3 baseColor = texture(baseColorMap, texCoord).rgb;
     float roughness = texture(roughMetalHeightAoMap, texCoord).r;
     float metalness = texture(roughMetalHeightAoMap, texCoord).g * metalFactor;
     float height = texture(roughMetalHeightAoMap, texCoord).b;
